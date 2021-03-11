@@ -1,4 +1,3 @@
-import { resolve } from "dns";
 import { Connectors } from "../connectors";
 import { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import { ILogger } from "../interfaces/ilogger";
@@ -53,7 +52,8 @@ export class DIDAccess {
         // Save this issued credential for later use.
         appInstanceDID.addCredential(credential);
 
-        // This generated credential contains the following properties:
+        // This generated credential must contain the following properties:
+        // TODO: CHECK THAT THE RECEIVED CREDENTIAL CONTENT IS VALID
         // appInstanceDid
         // appDid
 
@@ -66,10 +66,11 @@ export class DIDAccess {
      * The credential contains the real app did used to publish it.
      */
     public async getExistingAppIdentityCredential(): Promise<DIDPlugin.VerifiableCredential> {
+        this.helper.logger.log("Trying to get an existing app ID credential from storage");
+
         let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
 
-        // Load credentials first before being able to call getCredential().
-        await DIDHelper.loadDIDCredentials(appInstanceDID);
+        this.helper.logger.log("App Instance DID:", appInstanceDID);
 
         let credential = appInstanceDID.getCredential("#app-id-credential");
         if (credential) {
@@ -122,6 +123,9 @@ export class DIDAccess {
             didStore = didCreationresult.didStore;
             did = didCreationresult.did;
         }
+
+        // Load credentials first before being able to call getCredential().
+        await DIDHelper.loadDIDCredentials(did);
 
         return {
             did: did,

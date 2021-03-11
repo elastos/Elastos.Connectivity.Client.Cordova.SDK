@@ -10,7 +10,7 @@ export class Connectors {
      * their Elastos operations (get credentials, authenticate on hive, call smart contracts, etc).
      */
     public static registerConnector(connector: IConnector) {
-        this.connectors.push()
+        this.connectors.push(connector);
     }
 
     /**

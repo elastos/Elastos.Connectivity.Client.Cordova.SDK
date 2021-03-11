@@ -3,6 +3,8 @@
       "esModuleInterop": true,
       "declaration": true,
       "outDir": "dist",
+      "module": "es2020",
+      "moduleResolution": "node",
       "typeRoots": [
         "node_modules",
       ],

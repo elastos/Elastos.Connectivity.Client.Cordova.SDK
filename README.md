@@ -1,10 +1,10 @@
-# Trinity DApp SDK
+# Elastos Connectivity Client Cordova SDK
 
-This is a helper Typescript SDK for all elastOS (Trinity) dApps.
+TODO
 
 ## Installation
 
-```npm i --save @elastosfoundation/trinity-dapp-sdk```
+```npm i --save @elastosfoundation/elastos-connectivity-sdk-cordova```
 
 ## Build
 
@@ -12,14 +12,27 @@ This is a helper Typescript SDK for all elastOS (Trinity) dApps.
 
 Generated output is in **dist/**.
 
-## Publish
+# Publishing account
 
-```npm publish```
+- Organization: @elastosfoundation
+- Owner: @benjaminpiette
+
+# How to publish to npmjs.com
+
+- `npm adduser` (once)
+- `npm login` (once)
+- Increase version number in package.json
+- `npm run prepublish`
+- `npm publish --access=public`
 
 ## Usage example
 
 ```
-import * as TrinitySDK from '@elastosfoundation/trinity-dapp-sdk';
+import { Connectors, Hive } from '@elastosfoundation/elastos-connectivity-sdk-cordova';
+import { EssentialsConnector } from '@elastosfoundation/essentials-connector-cordova';
 
-let web3Provider = new TrinitySDK.Ethereum.Web3.Providers.TrinityWeb3Provider();
+// If willing to let users use Elastos Essentials to handle operations:
+Connectors.registerConnector(new EssentialsConnector());
+
+let dataSync = new Hive.DataSync.HiveDataSync(userVault);
 ```
