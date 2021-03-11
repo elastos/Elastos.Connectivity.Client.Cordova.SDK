@@ -1,0 +1,35 @@
+{
+  "name": "@elastosfoundation/elastos-connectivity-sdk-cordova",
+  "version": "1.0.0",
+  "description": "Cordova based connectivity SDK to bridge mobile Apps with Elastos wallets",
+  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "prepublish": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elastos/Elastos.Connectivity.Client.Cordova.SDK.git"
+  },
+  "files": [
+    "index.d.ts",
+    "dist"
+  ],
+  "keywords": [],
+  "author": "Elastos Foundation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elastos/Elastos.Connectivity.Client.Cordova.SDK/issues"
+  },
+  "homepage": "https://github.com/elastos/Elastos.Connectivity.Client.Cordova.SDK",
+  "dependencies": {
+    "moment": "^2.29.1",
+    "web3": "~1.2.9",
+    "web3-core": "1.2.9"
+  },
+  "devDependencies": {
+    "elastos-cordova-plugin-did": "git+https://github.com/elastos/Elastos.DID.Cordova.SDK.git",
+    "elastos-cordova-plugin-hive": "git+https://github.com/elastos/Elastos.NET.Hive.Cordova.SDK.git"
+  }
+}
