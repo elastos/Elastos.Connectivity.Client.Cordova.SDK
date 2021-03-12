@@ -3,12 +3,13 @@ import { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
 import { ILogger } from "../../interfaces/ilogger";
 import { DefaultLogger } from "../../internal/defaultlogger";
 import { Utils } from "../utils";
+import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
 
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDHelper {
     public logger: ILogger = new DefaultLogger();
-    private storageLayer: IKeyValueStorage = null;
+    private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
 
     constructor() {}
 

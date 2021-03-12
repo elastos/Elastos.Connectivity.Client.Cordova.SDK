@@ -3,13 +3,14 @@ import { ILogger } from "../interfaces/ilogger";
 import { DID } from "../index";
 import { DefaultLogger } from "../internal/defaultlogger";
 import { DIDHelper } from "../did/internal/didhelper";
+import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 export class AuthHelper {
   private didAccess: DID.DIDAccess;
-  private storageLayer: IKeyValueStorage = null;
+  private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
   private logger = new DefaultLogger();
 
   constructor() {
