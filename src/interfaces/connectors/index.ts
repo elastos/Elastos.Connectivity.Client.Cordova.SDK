@@ -1,8 +1,8 @@
-import { IConnector } from "./iconnector";
-import { IDIDConnectorAPI } from "./ididconnectorapi";
-import { IWalletConnectorAPI } from "./iwalletconnectorapi";
+import type { IConnector } from "./iconnector";
+import type { IDIDConnectorAPI } from "./ididconnectorapi";
+import type { IWalletConnectorAPI } from "./iwalletconnectorapi";
 
-export {
+export type {
     IConnector,
     IDIDConnectorAPI,
     IWalletConnectorAPI

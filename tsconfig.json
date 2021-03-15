@@ -1,18 +1,26 @@
 {
-    "compilerOptions": {
-      "esModuleInterop": true,
-      "declaration": true,
-      "outDir": "dist",
-      "module": "es2020",
-      "moduleResolution": "node",
-      "typeRoots": [
-        "node_modules",
-      ],
-      "types": [
-        "web3-core/types",
-        "elastos-cordova-plugin-did",
-        "elastos-cordova-plugin-hive"
-      ]
-    },
-    "include": ["src/**/*"]
+  "extends": "@tsconfig/svelte/tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "declaration": true,
+    "outDir": "dist",
+    "module": "es2020",
+    "moduleResolution": "node",
+    "isolatedModules": false,
+    "typeRoots": [
+      "node_modules",
+    ],
+    "types": [
+      "web3-core/types",
+      "elastos-cordova-plugin-did",
+      "elastos-cordova-plugin-hive",
+      "svelte",
+      "svelte/store",
+      "svelte/motion",
+      "svelte/transition",
+      "svelte/animate",
+      "svelte/easing"
+    ]
+  },
+  "include": ["src/**/*"]
 }

@@ -1,6 +1,6 @@
 import moment from "moment";
-import { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
-import { ILogger } from "../../interfaces/ilogger";
+import type { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
+import type { ILogger } from "../../interfaces/ilogger";
 import { DefaultLogger } from "../../internal/defaultlogger";
 import { Utils } from "../utils";
 import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";

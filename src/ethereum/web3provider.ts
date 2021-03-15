@@ -1,6 +1,6 @@
-import { AbstractProvider, RequestArguments } from "web3-core";
-import { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
-import { Connectors } from "../connectors";
+import type { AbstractProvider, RequestArguments } from "web3-core";
+import type { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
+import { Connectivity } from "../connectivity";
 
 export class ElastosWeb3Provider implements AbstractProvider {
     constructor(private rpcApiEndpoint: string) {}
@@ -56,7 +56,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
 
     // Can be inherited for custom behaviour.
     protected async sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        let txId = await Connectors.getActiveConnector().sendSmartContractTransaction(payload);
+        let txId = await Connectivity.getActiveConnector().sendSmartContractTransaction(payload);
 
         callback(null, {
             jsonrpc: "2.0",
@@ -88,7 +88,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
     }
 
     private ensureConnectorActive() {
-        if (Connectors.getActiveConnector() == null)
+        if (Connectivity.getActiveConnector() == null)
             throw new Error("An active connector must be defined in order to do this action");
     }
 }

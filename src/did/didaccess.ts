@@ -1,8 +1,8 @@
-import { Connectors } from "../connectors";
-import { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
-import { ILogger } from "../interfaces/ilogger";
+import { Connectivity } from "../connectivity";
+import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
+import type { ILogger } from "../interfaces/ilogger";
 import { DefaultLogger } from "../internal/defaultlogger";
-import { FastDIDCreationResult } from "./fastdidcreationresult";
+import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./internal/didhelper";
 import { Utils } from "./utils";
 const moment = require('moment');
@@ -43,7 +43,7 @@ export class DIDAccess {
         // No such credential, so we have to create one. Send an intent to get that from the did app
         this.helper.logger.log("Starting to generate a new App ID credential.");
 
-        let credential = await Connectors.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
+        let credential = await Connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
 
         // TODO IMPORTANT: Check if the credential was issued by the user himself for security purpose, to make sure
         // another app is not trying to issue and add a fake app-id-credential credential to user's profile
@@ -211,7 +211,7 @@ export class DIDAccess {
     }
 
     private ensureConnectorActive() {
-        if (Connectors.getActiveConnector() == null)
+        if (Connectivity.getActiveConnector() == null)
             throw new Error("An active connector must be defined in order to do this action");
     }
 }

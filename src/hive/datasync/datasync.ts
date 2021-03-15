@@ -1,5 +1,5 @@
-import { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
-import { ILogger } from "../../interfaces/ilogger";
+import type { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
+import type { ILogger } from "../../interfaces/ilogger";
 import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
 import { DefaultLogger } from "../../internal/defaultlogger";
 

@@ -1,9 +1,12 @@
-import { ILogger } from "./ilogger";
-import { IKeyValueStorage } from "./ikeyvaluestorage";
+import type { ILogger } from "./ilogger";
+import type { IKeyValueStorage } from "./ikeyvaluestorage";
 import * as Connectors from "./connectors";
 
-export {
+export type {
     ILogger,
-    IKeyValueStorage,
+    IKeyValueStorage
+}
+
+export {
     Connectors
 }

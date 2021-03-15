@@ -1,4 +1,4 @@
-import { ILogger } from "../interfaces/ilogger";
+import type { ILogger } from "../interfaces/ilogger";
 
 export class DefaultLogger implements ILogger {
     log(...args: any) {

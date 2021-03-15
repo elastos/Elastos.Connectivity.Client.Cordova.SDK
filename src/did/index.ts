@@ -1,8 +1,11 @@
 import { DIDAccess } from "./didaccess";
-import { FastDIDCreationResult } from "./fastdidcreationresult";
+import type { FastDIDCreationResult } from "./fastdidcreationresult";
+
+export type {
+    FastDIDCreationResult
+}
 
 export {
-    DIDAccess,
-    FastDIDCreationResult
+    DIDAccess
 }
 

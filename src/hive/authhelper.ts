@@ -1,6 +1,6 @@
-import { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
-import { ILogger } from "../interfaces/ilogger";
-import { DID } from "../index";
+import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
+import type { ILogger } from "../interfaces/ilogger";
+import { DIDAccess } from "../did";
 import { DefaultLogger } from "../internal/defaultlogger";
 import { DIDHelper } from "../did/internal/didhelper";
 import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
@@ -9,7 +9,7 @@ declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 export class AuthHelper {
-  private didAccess: DID.DIDAccess;
+  private didAccess: DIDAccess;
   private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
   private logger = new DefaultLogger();
 
@@ -37,7 +37,7 @@ export class AuthHelper {
    */
   public getClientWithAuth(onAuthError?: (e: Error)=>void): Promise<HivePlugin.Client> {
     return new Promise(async (resolve)=>{
-      this.didAccess = new DID.DIDAccess();
+      this.didAccess = new DIDAccess();
       this.didAccess.setStorage(this.storageLayer);
       this.didAccess.setLogger(this.logger);
 
