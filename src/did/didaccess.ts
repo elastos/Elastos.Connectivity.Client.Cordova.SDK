@@ -1,6 +1,7 @@
 import { Connectivity } from "../connectivity";
 import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../interfaces/ilogger";
+import { ConnectivityHelper } from "../internal/connectivityhelper";
 import { DefaultLogger } from "../internal/defaultlogger";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./internal/didhelper";
@@ -36,28 +37,32 @@ export class DIDAccess {
     }
 
     public async generateAppIdCredential(): Promise<DIDPlugin.VerifiableCredential> {
-        this.ensureConnectorActive();
+        return new Promise((resolve)=>{
+            ConnectivityHelper.ensureActiveConnector(async ()=>{
+                let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
 
-        let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
+                // No such credential, so we have to create one. Send an intent to get that from the did app
+                this.helper.logger.log("Starting to generate a new App ID credential.");
 
-        // No such credential, so we have to create one. Send an intent to get that from the did app
-        this.helper.logger.log("Starting to generate a new App ID credential.");
+                let credential = await Connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
 
-        let credential = await Connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
+                // TODO IMPORTANT: Check if the credential was issued by the user himself for security purpose, to make sure
+                // another app is not trying to issue and add a fake app-id-credential credential to user's profile
+                // by another way.
 
-        // TODO IMPORTANT: Check if the credential was issued by the user himself for security purpose, to make sure
-        // another app is not trying to issue and add a fake app-id-credential credential to user's profile
-        // by another way.
+                // Save this issued credential for later use.
+                appInstanceDID.addCredential(credential);
 
-        // Save this issued credential for later use.
-        appInstanceDID.addCredential(credential);
+                // This generated credential must contain the following properties:
+                // TODO: CHECK THAT THE RECEIVED CREDENTIAL CONTENT IS VALID
+                // appInstanceDid
+                // appDid
 
-        // This generated credential must contain the following properties:
-        // TODO: CHECK THAT THE RECEIVED CREDENTIAL CONTENT IS VALID
-        // appInstanceDid
-        // appDid
-
-        return credential;
+                resolve(credential);
+            }, ()=>{
+                resolve(null);
+            });
+        });
     }
 
     /**

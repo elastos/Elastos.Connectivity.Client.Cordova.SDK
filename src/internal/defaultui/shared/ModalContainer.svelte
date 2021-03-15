@@ -2,10 +2,9 @@
 	import { modal } from './stores';
 	import { bind } from './Modal.svelte';
 	import Modal from './Modal.svelte';
-	import IdentityPrompt from '../generic/IdentityPrompt.svelte';
 
-	export function test2() {
-		modal.set(bind(IdentityPrompt, { message: "Hey cool 2"}));
+	export function show(component: Svelte2TsxComponent, props: any) {
+		modal.set(bind(component, props));
 	}
 </script>
 

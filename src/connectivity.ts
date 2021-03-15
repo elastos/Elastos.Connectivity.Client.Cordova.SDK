@@ -27,11 +27,24 @@ export class Connectivity {
      * by all Elastos operation that require access to a connector API.
      */
     public static setActiveConnector(connectorName: string) {
-        this.activeConnector = this.connectors.find((c)=>c.name === connectorName);
+        if (connectorName == null) {
+            this.activeConnector = null;
+        }
+        else {
+            let newActiveConnector = this.connectors.find((c)=>c.name === connectorName);
+            if (!newActiveConnector)
+                throw new Error("Failed to set active connector. Connector "+connectorName+" not found!");
+
+            this.activeConnector = newActiveConnector;
+        }
     }
 
     public static getActiveConnector(): IConnector | null {
         return this.activeConnector;
+    }
+
+    public static getAvailableConnectors(): IConnector[] {
+        return this.connectors;
     }
 
     /**
