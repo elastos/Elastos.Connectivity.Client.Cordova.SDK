@@ -10,18 +10,9 @@ declare let hiveManager: HivePlugin.HiveManager;
 
 export class AuthHelper {
   private didAccess: DIDAccess;
-  private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
   private logger = new DefaultLogger();
 
   constructor() {
-  }
-
-  /**
-   * Overrides the default storage layer in order to store data in a custom storage.
-   * By default, the default storage uses webview's local storage.
-   */
-  public setStorage(storageLayer: IKeyValueStorage) {
-    this.storageLayer = storageLayer;
   }
 
   /**
@@ -38,7 +29,6 @@ export class AuthHelper {
   public getClientWithAuth(onAuthError?: (e: Error)=>void): Promise<HivePlugin.Client> {
     return new Promise(async (resolve)=>{
       this.didAccess = new DIDAccess();
-      this.didAccess.setStorage(this.storageLayer);
       this.didAccess.setLogger(this.logger);
 
       let authHelper = this;

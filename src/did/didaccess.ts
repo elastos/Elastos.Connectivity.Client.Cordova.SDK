@@ -1,4 +1,4 @@
-import { Connectivity } from "../connectivity";
+import { connectivity } from "..";
 import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../interfaces/ilogger";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
@@ -18,14 +18,6 @@ export class DIDAccess {
     }
 
     /**
-     * Overrides the default storage layer in order to store data in a custom storage.
-     * By default, the default storage uses webview's local storage.
-     */
-    public setStorage(storageLayer: IKeyValueStorage) {
-        this.helper.setStorage(storageLayer);
-    }
-
-    /**
      * Overrides the default console logger with a custom logger.
      */
     public setLogger(logger: ILogger) {
@@ -33,7 +25,14 @@ export class DIDAccess {
     }
 
     public async getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
-        return null;
+        return new Promise((resolve)=>{
+            ConnectivityHelper.ensureActiveConnector(async ()=>{
+                let presentation = await connectivity.getActiveConnector().getCredentials(claims);
+                resolve(presentation);
+            }, ()=>{
+                resolve(null);
+            });
+        });
     }
 
     public async generateAppIdCredential(): Promise<DIDPlugin.VerifiableCredential> {
@@ -44,7 +43,7 @@ export class DIDAccess {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
                 this.helper.logger.log("Starting to generate a new App ID credential.");
 
-                let credential = await Connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
+                let credential = await connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
 
                 // TODO IMPORTANT: Check if the credential was issued by the user himself for security purpose, to make sure
                 // another app is not trying to issue and add a fake app-id-credential credential to user's profile
@@ -206,17 +205,12 @@ export class DIDAccess {
      * Creates a new application instance DID store, DID, and saves info to permanent storage.
      */
     public async createNewAppInstanceDID(): Promise<{didStore: DIDPlugin.DIDStore, did: DIDPlugin.DID}> {
-        let didCreationResult = await this.fastCreateDID(DIDPlugin.MnemonicLanguage.ENGLISH);
+        let didCreationResult = await this.fastCreateDID("ENGLISH");
         await this.helper.saveAppInstanceDIDInfo(didCreationResult.didStore.getId(), didCreationResult.did.getDIDString(), didCreationResult.storePassword);
 
         return {
             didStore: didCreationResult.didStore,
             did: didCreationResult.did
         }
-    }
-
-    private ensureConnectorActive() {
-        if (Connectivity.getActiveConnector() == null)
-            throw new Error("An active connector must be defined in order to do this action");
     }
 }

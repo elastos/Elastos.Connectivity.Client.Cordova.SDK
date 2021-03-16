@@ -1,4 +1,4 @@
-import { Connectivity } from "..";
+import { connectivity } from "..";
 
 export class ConnectivityHelper {
     /**
@@ -6,10 +6,10 @@ export class ConnectivityHelper {
      * If none, user is prompted to choose one.
      */
     public static async ensureActiveConnector(onActiveConnector:()=>void, onCancelled:()=>void) {
-        if (Connectivity.getActiveConnector() != null)
+        if (connectivity.getActiveConnector() != null)
             onActiveConnector();
         else {
-            let selectedConnectorName = await Connectivity.genericUIHandler.showConnectorChooser();
+            let selectedConnectorName = await connectivity.genericUIHandler.showConnectorChooser();
             if (selectedConnectorName)
                 onActiveConnector();
             else

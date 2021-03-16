@@ -4,12 +4,12 @@ import type { ILogger } from "../../interfaces/ilogger";
 import { DefaultLogger } from "../../internal/defaultlogger";
 import { Utils } from "../utils";
 import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
+import { globalStorageService } from "../../services/global.storage.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDHelper {
     public logger: ILogger = new DefaultLogger();
-    private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
 
     constructor() {}
 
@@ -18,14 +18,6 @@ export class DIDHelper {
      */
     public setLogger(logger: ILogger) {
         this.logger = logger;
-    }
-
-    /**
-     * Overrides the default storage layer in order to store data in a custom storage.
-     * By default, the default storage uses webview's local storage.
-     */
-    public setStorage(storageLayer: IKeyValueStorage) {
-        this.storageLayer = storageLayer;
     }
 
     /**
@@ -50,14 +42,14 @@ export class DIDHelper {
      * Convenient way to retrieve settings from the app manager plugin.
      */
     public getAppManagerSetting(settingName: string, defaultValue: string): Promise<string> {
-        return this.storageLayer.get(settingName, defaultValue);
+        return globalStorageService.get(settingName, defaultValue);
     }
 
     /**
      * Convenient way to save settings to the app manager plugin.
      */
     public setAppManagerSetting(settingName: string, value: string): Promise<void> {
-        return this.storageLayer.set(settingName, value);
+        return globalStorageService.set(settingName, value);
     }
 
     /**

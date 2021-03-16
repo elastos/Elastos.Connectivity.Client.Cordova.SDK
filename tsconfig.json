@@ -6,7 +6,8 @@
     "outDir": "dist",
     "module": "es2020",
     "moduleResolution": "node",
-    "isolatedModules": false,
+    "isolatedModules": true,
+    "preserveConstEnums": true,
     "typeRoots": [
       "node_modules",
     ],
@@ -22,5 +23,5 @@
       "svelte/easing"
     ]
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "services"]
 }

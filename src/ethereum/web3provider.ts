@@ -1,6 +1,6 @@
 import type { AbstractProvider, RequestArguments } from "web3-core";
 import type { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
-import { Connectivity } from "../connectivity";
+import { connectivity } from "..";
 
 export class ElastosWeb3Provider implements AbstractProvider {
     constructor(private rpcApiEndpoint: string) {}
@@ -56,7 +56,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
 
     // Can be inherited for custom behaviour.
     protected async sendTransaction(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        let txId = await Connectivity.getActiveConnector().sendSmartContractTransaction(payload);
+        let txId = await connectivity.getActiveConnector().sendSmartContractTransaction(payload);
 
         callback(null, {
             jsonrpc: "2.0",
@@ -67,7 +67,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
 
     // Mandatory method: sendAsync()
     async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        console.log("Trinity Web3 provider sendAsync payload", payload);
+        console.log("Elastos Web3 provider sendAsync payload", payload);
 
         switch (payload.method) {
             // Sending transaction is handled by a wallet app intent in order to sign the transaction.
@@ -85,10 +85,5 @@ export class ElastosWeb3Provider implements AbstractProvider {
                     callback(e);
                 }
         }
-    }
-
-    private ensureConnectorActive() {
-        if (Connectivity.getActiveConnector() == null)
-            throw new Error("An active connector must be defined in order to do this action");
     }
 }

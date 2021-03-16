@@ -495,7 +495,7 @@ export class HiveDataSync {
             return entries;
         }
         catch (err) {
-            if (hiveManager.errorOfType(err, HivePlugin.EnhancedErrorType.COLLECTION_NOT_FOUND)) {
+            if (hiveManager.errorOfType(err, "COLLECTION_NOT_FOUND")) {
                 this.logDebug("Backup collection does not exist on the vault yet, thus no modified entries returned");
                 return [];
             }
@@ -519,7 +519,7 @@ export class HiveDataSync {
         }
         catch (err) {
             let enhancedError = err as HivePlugin.EnhancedError;
-            if (enhancedError.getType && enhancedError.getType() == HivePlugin.EnhancedErrorType.COLLECTION_NOT_FOUND) {
+            if (enhancedError.getType && enhancedError.getType() == "COLLECTION_NOT_FOUND") {
                 this.logDebug("Backup collection does not exist on the vault yet, thus no entries returned");
                 return [];
             }
