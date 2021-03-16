@@ -6,7 +6,9 @@ import type { PersistentInfo } from '../model/persistentinfo.model';
 class PersistenceService {
     private persistentInfo: PersistentInfo = null;
 
-    constructor() {}
+    constructor() {
+        this.init();
+    }
 
     public async init() {
         let persistentInfoJsonStr = await globalStorageService.get("persistentinfo", null) as string;

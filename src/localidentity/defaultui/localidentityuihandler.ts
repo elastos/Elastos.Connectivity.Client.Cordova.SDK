@@ -9,16 +9,13 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         target: document.body
     });
 
-    showOnBoarding() {
+    showOnBoarding(): Promise<void> {
+        // TODO: empty for now
         return new Promise((resolve)=>{
             this.localIDModalContainer.show(OnBoarding, {
-                onSelection: (selectedConnectorName)=>{
-                    console.log("Selected connector: "+selectedConnectorName);
-                    resolve(selectedConnectorName);
-                }
             }, {}, {}, {
                 onClosed: ()=>{
-
+                    resolve();
                 }
             });
         });
@@ -27,7 +24,7 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     /**
      * Show the local identity creation popup / flow / steps
      */
-    showCreateIdentity() {
+    showCreateIdentity(): Promise<void> {
         return new Promise<void>((resolve)=>{
             this.localIDModalContainer.show(IdentitySetup, {
             }, {}, {}, {
@@ -38,15 +35,15 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         });
     }
 
-    showRequestGetCredentials() {
+    showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
         throw new Error("Method not implemented.");
     }
 
-    showRequestIssueAppIDCredential() {
+    showRequestIssueAppIDCredential(): Promise<DIDPlugin.VerifiableCredential> {
         throw new Error("Method not implemented.");
     }
 
-    showManageIdentity() {
+    showManageIdentity(): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }

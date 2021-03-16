@@ -9,22 +9,29 @@ export class LocalIdentityConnector implements Connectors.IConnector {
      * DID API
      */
 
-    getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
-        throw new Error("Method not implemented.");
+    async getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+        if (!await identityService.identityIsFullyReadyToUse()) {
+            // No local identity yet: we have to create one first
+            console.log("Local identity is not ready to use, showing identity creation screen");
+            await connectivity.localIdentityUIHandler.showCreateIdentity();
+            return null; // TODO: for now, after the initial creation, we don't proceed to the initial request. This is to be done
+        }
+        else {
+            let credential = await connectivity.localIdentityUIHandler.showRequestGetCredentials(claims);
+            return credential;
+        }
     }
 
     async generateAppIdCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
-        if (!identityService.identityIsFullyReadyToUse()) {
+        if (!await identityService.identityIsFullyReadyToUse()) {
             // No local identity yet: we have to create one first
+            console.log("Local identity is not ready to use, showing identity creation screen");
             await connectivity.localIdentityUIHandler.showCreateIdentity();
-
-        }
-        if (identityService.identityIsFullyReadyToUse()) {
-            let credential = await connectivity.localIdentityUIHandler.showRequestIssueAppIDCredential();
-            return credential;
+            return null; // TODO: for now, after the initial creation, we don't proceed to the initial request. This is to be done
         }
         else {
-            return null;
+            let credential = await connectivity.localIdentityUIHandler.showRequestIssueAppIDCredential();
+            return credential;
         }
     }
 
