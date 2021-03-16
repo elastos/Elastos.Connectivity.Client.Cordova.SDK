@@ -8,8 +8,7 @@ export class GenericUIHandler implements IGenericUIHandler {
         target: document.body
     });
 
-    constructor()
-    {}
+    constructor() {}
 
     public async showConnectorChooser(): Promise<string> {
         return new Promise((resolve)=>{
