@@ -14,6 +14,7 @@
     import { connectivity } from '../../..';
     import type { IConnector } from '../../../interfaces/connectors';
     import { modal } from '../shared/stores';
+    import { globalModalService } from '../../../services/global.modal.service';
 
     export let onSelection = null;
 
@@ -21,9 +22,13 @@
         connectivity.setActiveConnector(connector.name);
 
         // Close the popup
-        modal.set(null);
+        //modal.set(null);
 
-        onSelection(connector.name);
+        globalModalService.getModal().close();
+
+        setTimeout(()=>{
+            onSelection(connector.name);
+        }, 500);
 
         /*
         await this.identityService.saveUsingExternalIdentityWalletPreference();

@@ -1,5 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
@@ -22,7 +23,8 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, '/dist'),
 		filename: 'index.js',
-		libraryTarget: "umd"
+		libraryTarget: "umd",
+		publicPath:'/dist'
 	},
 	module: {
 		rules: [
@@ -33,7 +35,7 @@ module.exports = {
 			},
 			{
 				test: /\.svelte$/,
-				exclude: /node_modules/,
+				//exclude: /node_modules/,
 				use: {
 					loader: 'svelte-loader',
 					options: {
@@ -61,6 +63,21 @@ module.exports = {
 				]
 			},
 			{
+                test: /\.scss$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            sourceMap: true
+                        }
+                    },
+                    {
+                        loader: "sass-loader"
+                    }
+                ]
+            },
+			{
 				// required to prevent errors from Svelte on Webpack 5+
 				test: /node_modules\/svelte\/.*\.mjs$/,
 				resolve: {
@@ -73,6 +90,11 @@ module.exports = {
 	plugins: [
 		new MiniCssExtractPlugin({
 			filename: '[name].css'
+		}),
+		new CopyWebpackPlugin({
+			patterns: [
+				{ from: 'src/assets/', to: 'assets/' }
+			]
 		})
 	],
 	devtool: prod ? false : 'source-map',

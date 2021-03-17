@@ -6,6 +6,18 @@ TODO
 
 ```npm i --save @elastosfoundation/elastos-connectivity-sdk-cordova```
 
+### Angular apps:
+
+Add SDK assets to angular.json's assets section:
+
+```
+{
+    "glob": "**/*",
+    "input": "./node_modules/@elastosfoundation/elastos-connectivity-sdk-cordova/dist/assets",
+    "output": "assets"
+}
+```
+
 ## Build
 
 ```npm run build```

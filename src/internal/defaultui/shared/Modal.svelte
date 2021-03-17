@@ -12,12 +12,16 @@
       });
     };
   }
+  export function close() {
+    close();
+  }
 </script>
 
-<script>
+<script lang="ts">
   import * as svelte from 'svelte';
   import { fade } from 'svelte/transition';
   import { createEventDispatcher } from "svelte";
+import type { ModalCallbacks } from './modalcallbacks';
 
   const dispatch = createEventDispatcher();
 
@@ -84,33 +88,41 @@
   let onOpened = toVoid;
   let onClosed = toVoid;
 
-  const open = (
+  let callback: ModalCallbacks = {};
+
+  export const setCallback = (_callback: ModalCallbacks) => {
+    callback = _callback;
+  }
+
+  export const open = (
     NewComponent,
     newProps = {},
-    options = {},
-    callback = {}
+    options = {}
   ) => {
+    console.log("OPEN modal");
     Component = bind(NewComponent, newProps);
     state = { ...defaultState, ...options };
-    onOpen = (event) => {
-      if (callback.onOpen) callback.onOpen(event);
+    onOpen = () => {
+      if (callback.onOpen) callback.onOpen();
       dispatch('opening');
     },
-    onClose = (event) => {
-      if (callback.onClose) callback.onClose(event);
+    onClose = () => {
+      if (callback.onClose) callback.onClose();
       dispatch('closing');
     },
-    onOpened = (event) => {
-      if (callback.onOpened) callback.onOpened(event);
+    onOpened = () => {
+      console.log("ONOPENED", callback);
+      if (callback.onOpened) callback.onOpened();
       dispatch('opened');
     };
-    onClosed = (event) => {
-      if (callback.onClosed) callback.onClosed(event);
+    onClosed = () => {
+      if (callback.onClosed) callback.onClosed();
       dispatch('closed');
     };
   };
 
-  const close = (callback = {}) => {
+  export const close = (callback: ModalCallbacks = {}) => {
+    console.log("CLOSE modal");
     onClose = callback.onClose || onClose;
     onClosed = callback.onClosed || onClosed;
     Component = null;
@@ -124,7 +136,7 @@
 
     if (Component && event.key === 'Tab') {
       // trap focus
-      const nodes = modalWindow.querySelectorAll('*');
+      /* BPI DISABLED TO BUILD IN TS const nodes = modalWindow.querySelectorAll('*');
       const tabbable = Array.from(nodes).filter(node => node.tabIndex >= 0);
 
       let index = tabbable.indexOf(document.activeElement);
@@ -134,7 +146,7 @@
       index %= tabbable.length;
 
       tabbable[index].focus();
-      event.preventDefault();
+      event.preventDefault();*/
     }
   };
 
@@ -153,6 +165,7 @@
 
   $: {
     if (isFunction(show)) {
+      console.log("SHOW", show);
       open(show);
     } else {
       close();

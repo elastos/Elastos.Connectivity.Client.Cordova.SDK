@@ -1,19 +1,42 @@
 import type { ILocalIdentityUIHandler } from "../../interfaces/ui/ilocalidentityuihandler";
-
-import ModalContainer from "../../internal/defaultui/shared/ModalContainer.svelte";
+import { globalModalService } from "../../services/global.modal.service";
 import OnBoarding from "./pages/OnBoarding.svelte";
 import IdentitySetup from "./pages/IdentitySetup.svelte";
+import Root from './pages/Root.svelte';
+import { viewType } from './localidstores';
+import { ViewType } from "./viewtype";
 
 export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
-    private localIDModalContainer = new ModalContainer({
-        target: document.body
-    });
+    private localIdentityModalShown = false;
+
+    private async showRootComponentInModal(): Promise<void> {
+        return new Promise((resolve)=>{
+            if (!this.localIdentityModalShown) {
+                console.log("Showing local identity modal");
+                globalModalService.getModal().show(Root, {
+                }, {
+                    onOpen: () => {
+                        this.localIdentityModalShown = true
+                        console.log("Modal is opened, resolving");
+                        resolve();
+                    },
+                    onClosed: ()=>{
+                        this.localIdentityModalShown = false;
+                    }
+                });
+            }
+            else {
+                // Nothing to do
+                resolve();
+            }
+        });
+    }
 
     showOnBoarding(): Promise<void> {
         // TODO: empty for now
         return new Promise((resolve)=>{
-            this.localIDModalContainer.show(OnBoarding, {
-            }, {}, {}, {
+            globalModalService.getModal().show(OnBoarding, {
+            }, {
                 onClosed: ()=>{
                     resolve();
                 }
@@ -24,15 +47,11 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     /**
      * Show the local identity creation popup / flow / steps
      */
-    showCreateIdentity(): Promise<void> {
-        return new Promise<void>((resolve)=>{
-            this.localIDModalContainer.show(IdentitySetup, {
-            }, {}, {}, {
-                onClosed: ()=>{
-                    resolve();
-                }
-            });
-        });
+    async showCreateIdentity(): Promise<void> {
+        console.log("Local identity: showCreateIdentity()");
+        await this.showRootComponentInModal();
+        console.log("Setting view type to IdentitySetup");
+        viewType.set(ViewType.IdentitySetup);
     }
 
     showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
