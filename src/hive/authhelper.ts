@@ -130,7 +130,7 @@ export class AuthHelper {
 
         appIdCredential = await this.didAccess.generateAppIdCredential();
         if (!appIdCredential) {
-          this.logger.warn("Failed to generated a new App ID credential");
+          this.logger.warn("Failed to generate a new App ID credential");
           resolve(null);
           return;
         }

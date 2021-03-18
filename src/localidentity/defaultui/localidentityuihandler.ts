@@ -6,6 +6,7 @@ import Root from './pages/Root.svelte';
 import { navigatedView } from './localidstores';
 import { ViewType } from "./viewtype";
 import { navService } from "./nav.service";
+import { identityService } from "../services/identity.service";
 
 export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     private localIdentityModalShown = false;
@@ -56,11 +57,11 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     }
 
     showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
-        throw new Error("Method not implemented.");
+        return identityService.generatePresentationForClaims(claims);
     }
 
-    showRequestIssueAppIDCredential(): Promise<DIDPlugin.VerifiableCredential> {
-        throw new Error("Method not implemented.");
+    showRequestIssueAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
+        return identityService.generateApplicationIDCredential(appInstanceDID, "did:elastos:TODO");
     }
 
     showManageIdentity(): Promise<void> {

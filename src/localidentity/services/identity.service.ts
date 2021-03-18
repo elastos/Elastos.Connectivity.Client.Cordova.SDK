@@ -73,6 +73,15 @@ class IdentityService {
         }
     }
 
+    /**
+     * Tells if the DID is published and confirmed. Hvie doesn't need to be ready yet.
+     */
+    public async identityIsPublished(): Promise<boolean> {
+        let persistentInfo = persistenceService.getPersistentInfo();
+
+        return (persistentInfo.did.publicationStatus == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED);
+    }
+
     public async createLocalIdentity() {
         let persistentInfo = persistenceService.getPersistentInfo();
         let createdDIDInfo = await this.didHelper.fastCreateDID("ENGLISH");
@@ -350,6 +359,57 @@ class IdentityService {
         });
     }
 
+    /**
+     * Generates a semi-"fake" presentation that contains credentials for the required claims.
+     * As this is a local identity, we have to emulate everything that's missing with placeholders.
+     */
+    public async generatePresentationForClaims(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+        let persistenceInfo = persistenceService.getPersistentInfo();
+
+        // Take all the claims requested in the original intent and return credentials for each of them, with fake data.
+        let credentials: DIDPlugin.VerifiableCredential[] = [];
+
+        for(let claimName of Object.keys(claims)) {
+        let credential = await this.createCredential(claimName, persistenceInfo.did.storePassword);
+        console.log("Created temporary credential for claim:", claimName, credential);
+
+        if (credential)
+            credentials.push(credential);
+        }
+
+        return this.createCredaccessPresentation(credentials);
+      }
+
+      private async createCredential(claimName: string, storePassword: string): Promise<DIDPlugin.VerifiableCredential> {
+        const did = await identityService.getLocalDID();
+        const localProfile = await globalStorageService.getJSON('profile', {});
+        console.log('Local profile', localProfile);
+
+        const localName = localProfile.name || null;
+        const localEmail = localProfile.email || null;
+
+        // Handle a few standard claims nicely. Others default to a default value.
+        let properties: any = {};
+        switch (claimName) {
+          case "name":
+            properties.name = localName ? localName : "Anonymous user";
+            break;
+          case "email":
+            properties.email = localEmail ? localEmail : "unknown@email.com";
+          default:
+            // Empty properties
+        }
+
+        return new Promise((resolve)=>{
+          did.issueCredential(did.getDIDString(), "#"+claimName, ["TemporaryCredential"], 365, properties, storePassword, (cred)=>{
+            resolve(cred);
+          }, (err)=>{
+            console.error(err);
+            resolve(null);
+          });
+        });
+    }
+
     public createCredaccessPresentation(credentials: DIDPlugin.VerifiableCredential[]): Promise<DIDPlugin.VerifiablePresentation> {
         return new Promise(async (resolve) => {
             let persistentInfo = persistenceService.getPersistentInfo();
@@ -369,44 +429,43 @@ class IdentityService {
     /**
      * Generates a appid credential for hive authentication, silently
      */
-    /*public async generateAndSendApplicationIDCredentialIntentResponse(mainNativeApplicationDID: string, intent: AppManagerPlugin.ReceivedIntent) {
-        let persistentInfo = persistenceService.getPersistentInfo();
+    public async generateApplicationIDCredential(appinstancedid: string, mainNativeApplicationDID: string): Promise<DIDPlugin.VerifiableCredential> {
+        return new Promise(async (resolve)=>{
+            let persistentInfo = persistenceService.getPersistentInfo();
 
-        console.log("Generating appid credential");
-        console.log("User DID:", persistentInfo.did.didString);
+            console.log("Generating appid credential");
+            console.log("Local identity DID:", persistentInfo.did.didString);
 
-        let properties = {
-            appInstanceDid: intent.params.appinstancedid,
-            appDid: mainNativeApplicationDID,
-        };
+            let properties = {
+                appInstanceDid: appinstancedid,
+                appDid: mainNativeApplicationDID,
+            };
 
-        console.log("Properties:", properties);
+            console.log("Properties:", properties);
 
-        let userDID = await this.getLocalDID();
-        if (userDID) {
-            userDID.issueCredential(
-                intent.params.appinstancedid,
-                "#app-id-credential",
-                ['AppIdCredential'],
-                30, // one month - after that, we'll need to generate this credential again.
-                properties,
-                persistentInfo.did.storePassword,
-                async (issuedCredential) => {
-                    console.log("Sending appidcredissue intent response for intent id " + intent.intentId);
-                    let credentialAsString = await issuedCredential.toString();
-                    appManager.sendIntentResponse(null, {
-                        credential: credentialAsString
-                    }, intent.intentId);
-                }, async (err) => {
-                    console.error("Failed to issue the app id credential...", err);
-                }
-            );
-        }
-        else {
-            console.log("Sending empty appidcredissue intent response as no identity was found.");
-            await appManager.sendIntentResponse(null, {}, intent.intentId);
-        }
-    }*/
+            let userDID = await this.getLocalDID();
+            if (userDID) {
+                userDID.issueCredential(
+                    appinstancedid,
+                    "#app-id-credential",
+                    ['AppIdCredential'],
+                    30, // one month - after that, we'll need to generate this credential again.
+                    properties,
+                    persistentInfo.did.storePassword,
+                    async (issuedCredential) => {
+                        resolve(issuedCredential);
+                    }, async (err) => {
+                        console.error("Failed to issue the app id credential...", err);
+                        resolve(null);
+                    }
+                );
+            }
+            else {
+                console.log("Sending empty appidcredissue intent response as no identity was found.");
+                resolve(null);
+            }
+        });
+    }
 
     /**
      * Save in global preferences that the user has chosen to use the external identity wallet app (elastOS)
