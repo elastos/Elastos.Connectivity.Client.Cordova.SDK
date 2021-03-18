@@ -6,3 +6,7 @@ export type EditProfileNavParams = {
 export type IdentitySetupNavParams = {
     onIdentityCreationCompleted: ()=>void; // Callback called when identity creaiton is fully completed
 }
+
+export type ExportIdentityNavParams = {
+    onCompletion: ()=>void;
+}

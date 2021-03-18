@@ -1,5 +1,7 @@
 export enum ViewType {
     None,
     IdentitySetup,
-    EditProfile
+    EditProfile,
+    ManageIdentity,
+    ExportIdentity
 }

@@ -1,6 +1,6 @@
 import type { ILocalIdentityUIHandler } from "../../interfaces/ui/ilocalidentityuihandler";
 import { globalModalService } from "../../services/global.modal.service";
-import OnBoarding from "./pages/OnBoarding.svelte";
+import OnBoarding from "./pages/ExportIdentity.svelte";
 import IdentitySetup from "./pages/IdentitySetup.svelte";
 import Root from './pages/Root.svelte';
 import { navigatedView } from './localidstores';
@@ -41,11 +41,6 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         });
     }
 
-    async showOnBoarding(): Promise<void> {
-        // TODO: empty for now
-        return null;
-    }
-
     /**
      * Show the local identity creation popup / flow / steps
      */
@@ -65,14 +60,20 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     }
 
     showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+        // NOTE: No UI shown, direct response
         return identityService.generatePresentationForClaims(claims);
     }
 
     showRequestIssueAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
+        // NOTE: No UI shown, direct response
         return identityService.generateApplicationIDCredential(appInstanceDID, "did:elastos:TODO");
     }
 
     showManageIdentity(): Promise<void> {
-        throw new Error("Method not implemented.");
+        return new Promise(async (resolve)=>{
+            await this.showRootComponentInModal();
+            navService.navigateTo(ViewType.ManageIdentity);
+            // NOTE: if user cancels, we never fulfill this promise for now.
+        });
     }
 }

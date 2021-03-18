@@ -4,7 +4,7 @@ import * as Wallet from "./wallet";
 import * as Ethereum from "./ethereum";
 import { Connectivity } from "./connectivity";
 import * as Interfaces from "./interfaces";
-import { globalStorageService } from "./services/global.storage.service";
+import { localIdentityManager } from "./localidentity/manager";
 
 import { LocalIdentityConnector } from "./localidentity/connector";
 import { Localization } from "./internal/localization";
@@ -28,5 +28,5 @@ export {
 
     // Singleton instances
     connectivity,
-    globalStorageService
+    localIdentityManager
 }

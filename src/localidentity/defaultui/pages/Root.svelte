@@ -13,6 +13,8 @@
     import { navigatedView } from "../localidstores";
     import type { NavigatedView } from "../navigatedview";
     import { onDestroy } from "svelte";
+    import ManageIdentity from "./ManageIdentity.svelte";
+import ExportIdentity from "./ExportIdentity.svelte";
 
     export let activeView: NavigatedView = { viewType: ViewType.None };
 
@@ -30,6 +32,10 @@
 <IdentitySetup></IdentitySetup>
 {:else if activeView.viewType == ViewType.EditProfile }
 <EditProfile></EditProfile>
+{:else if activeView.viewType == ViewType.ManageIdentity }
+<ManageIdentity></ManageIdentity>
+{:else if activeView.viewType == ViewType.ExportIdentity }
+<ExportIdentity></ExportIdentity>
 {:else}
 Nothing here
 {/if}
