@@ -12,13 +12,18 @@
     import EditProfile from "./EditProfile.svelte";
     import { navigatedView } from "../localidstores";
     import type { NavigatedView } from "../navigatedview";
+    import { onDestroy } from "svelte";
 
     export let activeView: NavigatedView = { viewType: ViewType.None };
 
-    navigatedView.subscribe((newView)=>{
+    let unsubscriber = navigatedView.subscribe((newView)=>{
         console.log("[RootComponent] Active view changed:", newView);
         activeView = newView;
     })
+
+    onDestroy(()=>{
+        unsubscriber();
+    });
 </script>
 
 {#if activeView.viewType == ViewType.IdentitySetup }

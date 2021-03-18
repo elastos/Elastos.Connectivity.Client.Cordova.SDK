@@ -1,25 +1,15 @@
 import { dictionary, locale } from 'svelte-i18n';
+import { en } from '../assets/localidentity/languages/en';
+import { fr } from '../assets/localidentity/languages/fr';
+import { zh } from '../assets/localidentity/languages/zh';
 
 export class Localization {
     public static init() {
         dictionary.set({
-            en: {
-                credaccessprompt: {
-                    "login-msg": "Select one of the following options",
-                    "please-choose": 'Please choose',
-                    "your-did": 'Your DID',
-                    "temp-did": "Create a temporary identity"
-                },
-            },
-            fr: {
-                credaccessprompt: {
-                    "login-msg": "Choisissez l'une des options suivantes",
-                    "please-choose": 'Veuillez choisir',
-                    "your-did": 'Votre DID',
-                    "temp-did": "Créer une identité temporaraire"
-                },
-            },
+            en: en,
+            fr: fr,
+            zh: zh
         });
-        locale.set('en');
+        locale.set('en'); // TODO: PUBLIC API TO SET LANGUAGE
     }
 }
