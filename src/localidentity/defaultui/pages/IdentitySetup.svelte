@@ -39,12 +39,11 @@
     let swiper: Swiper;
     let activeSlideIndex = 0;
     let showSpinner = false;
+    let suggestRestartingFromScratch = false;
+    let hiveIsBeingConfigured = false;
+    let progress = 0;
 
     class IdentitySetupComponent {
-        suggestRestartingFromScratch = false;
-        hiveIsBeingConfigured = false;
-        progress = 0;
-
         // On init
         // TODO titleBarManager.setTitle(this.translate.instant('identitysetup.titlebar-title'));
         // TODO titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
@@ -85,19 +84,19 @@
                     try {
                         // Local DID creation
                         if (!this.isLocalDIDcreated()) {
-                            this.progress = 0.01;
+                            progress = 0.01;
                             await identityService.createLocalIdentity();
                         }
 
                         if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
-                            this.progress = 0.01;
+                            progress = 0.01;
                             let interval = setInterval(() => {
-                            if(this.progress >= 0.90) {
+                            if(progress >= 0.90) {
                                 clearInterval(interval);
                             } else {
-                                this.progress += 0.01;
+                                progress += 0.01;
                                 globalStorageService.set('progressDate', new Date());
-                                globalStorageService.set('progress', this.progress);
+                                globalStorageService.set('progress', progress);
                             }
                             }, 10000);
                             await identityService.publishIdentity();
@@ -105,13 +104,13 @@
 
                         if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
                             const progressDate = await globalStorageService.get('progressDate', null);
-                            const progress = parseFloat(await globalStorageService.get('progress', null));
+                            const storageProgress = parseFloat(await globalStorageService.get('progress', null));
                             let newProgress: number = null;
 
                             // If progress was previously initiated before starting app
-                            if(progressDate && progress) {
+                            if(progressDate && storageProgress) {
                             console.log('Last progress time', moment(progressDate).format('LT'));
-                            console.log('Left off at progress', progress);
+                            console.log('Left off at progress', storageProgress);
 
                             // Get saved date
                             const before = moment(progressDate);
@@ -124,37 +123,37 @@
                             const additionalProgress = durationInSeconds / 1000;
                             console.log('Progress while user was absent', additionalProgress);
                             // Add new progress to saved progress
-                            newProgress = additionalProgress + progress;
+                            newProgress = additionalProgress + storageProgress;
                             }
 
                             if(newProgress && newProgress <= 0.9) {
-                            this.progress = newProgress
-                            } else if(this.progress >= 0.9) {
-                            this.progress = 0.9;
+                                progress = newProgress
+                            } else if(progress >= 0.9) {
+                                progress = 0.9;
                             } else {
-                            this.progress = 0.01;
+                                progress = 0.01;
                             }
 
-                            console.log('Progress', this.progress);
+                            console.log('Progress', progress);
                             let interval = setInterval(() => {
-                            if(this.progress >= 0.90) {
+                            if(progress >= 0.90) {
                                 clearInterval(interval);
                             } else {
-                                this.progress += 0.01;
+                                progress += 0.01;
                                 globalStorageService.set('progressDate', new Date());
-                                globalStorageService.set('progress', this.progress);
+                                globalStorageService.set('progress', progress);
                             }
                             }, 10000);
                             await this.repeatinglyCheckAssistPublicationStatus();
                         }
 
                         if (!this.isHiveVaultReady()) {
-                            this.progress = 0.90;
+                            progress = 0.90;
                             let interval = setInterval(() => {
-                            if(this.progress >= 0.99) {
+                            if(progress >= 0.99) {
                                 clearInterval(interval);
                             } else {
-                                this.progress += 0.01;
+                                progress += 0.01;
                             }
                             }, 10000);
                             await this.prepareHiveVault();
@@ -165,7 +164,7 @@
                         // TODO 1) send a silent sentry report to be able to understand what's going on remotely
                         // 2) suggest user to restart the process fresh, as something is broken.
                         console.warn("Handled global exception:", e);
-                        this.suggestRestartingFromScratch = true;
+                        suggestRestartingFromScratch = true;
                         resolve();
                     }
                 }, 1000);
@@ -197,7 +196,7 @@
         }
 
         isHiveBeingConfigured(): boolean {
-            return this.hiveIsBeingConfigured;
+            return hiveIsBeingConfigured;
         }
 
         isEverythingReady(): boolean {
@@ -205,14 +204,14 @@
         }
 
         async prepareHiveVault() {
-            this.hiveIsBeingConfigured = true;
+            hiveIsBeingConfigured = true;
             try {
                 await hiveService.prepareHiveVault();
             }
             catch (e) {
                 throw e;
             } finally {
-                this.hiveIsBeingConfigured = false;
+                hiveIsBeingConfigured = false;
             }
         }
 
@@ -261,18 +260,24 @@
          * Clears all context and restarts identity creation from 0.
          */
         async restartProcessFromScratch() {
-            this.suggestRestartingFromScratch = false;
+            suggestRestartingFromScratch = false;
             await identityService.resetOnGoingProcess();
             this.resumeIdentitySetupFlow();
         }
 
         getProgress() {
-            let percent = this.progress * 100;
+            let percent = progress * 100;
             return percent.toFixed(0);
         }
     }
 
     let component = new IdentitySetupComponent();
+
+    function getProgress() {
+        // TODO: SHOULD BE IN THE COMPONENT, JUST CHECKING WHY SVELTE DOESN'T DETECTED
+        // CHANGES IN THE COMPONENT CLASS
+        return component.getProgress();
+    }
 
     onMount(async () => {
         console.log("Mouting IdentitySetup component");
@@ -282,176 +287,6 @@
         }
 	});
 </script>
-
-<content class="text-center">
-    {#if !component.wasTemporaryIdentityCreationStarted()}
-    <Swiper bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
-    pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}>
-            <SwiperSlide>
-                <img src="assets/localidentity/icons/did.svg" alt="" />
-                <h1>{$_("welcome")}</h1>
-                <h2>{$_("my-first-did")}</h2>
-            </SwiperSlide>
-            <SwiperSlide>
-                <LottiePlayer
-                    src="assets/localidentity/animations/fingerprint.json"
-                    background="transparent"
-                    speed="1"
-                    style="width: 150px; height: 150px;"
-                    autoplay="{true}"
-                    loop="{true}"
-                />
-                <p>{$_("identitysetup.slide2-msg")}</p>
-                <p>{$_("identitysetup.slide2-msg2")}</p>
-            </SwiperSlide>
-            <SwiperSlide>
-                <LottiePlayer
-                    src="assets/localidentity/animations/device.json"
-                    background="transparent"
-                    speed="1"
-                    style="width: 300px; height: 300px;"
-                    autoplay="{true}"
-                    loop="{true}"
-                />
-                <p>
-                    {$_("identitysetup.slide3-msg")}
-                </p>
-            </SwiperSlide>
-
-            <div class="swiper-pagination" slot="pagination"></div>
-            <div class="swiper-button-next" slot="button-next"></div>
-            <div class="swiper-button-prev" slot="button-prev"></div>
-        </Swiper>
-    {:else}
-        <grid>
-            <ion-row class="steps-row">
-                <ion-col size="12">
-                    <ion-label>
-                        <h1>{$_("identitysetup.create-did")}</h1>
-                        <h2>{$_("identitysetup.create-did-msg")}</h2>
-                    </ion-label>
-                    {#if component.isLocalDIDcreated()}
-                        <ion-icon
-                            class="done"
-                            name="checkmark-circle-outline"
-                        />
-                    {:else}
-                        <ion-spinner />
-                    {/if}
-                </ion-col>
-            </ion-row>
-            <ion-icon name="arrow-down-circle-outline" />
-            <ion-row class="steps-row">
-                <ion-col size="12">
-                    <ion-label>
-                        <h1>{$_("identitysetup.publish-did")}</h1>
-                        <h2>{$_("identitysetup.publish-did-msg")}</h2>
-                    </ion-label>
-                    {#if component.isDIDOnChain()}
-                        <ion-icon
-                            class="done"
-                            name="checkmark-circle-outline"
-                        />
-                    {:else if !component.isDIDBeingPublished()}
-                        <ion-icon class="pending" name="timer-outline" />
-                    {:else if !component.isDIDOnChain()}
-                        <ion-spinner />
-                    {/if}
-                </ion-col>
-            </ion-row>
-            <ion-icon name="arrow-down-circle-outline" />
-            <ion-row class="steps-row">
-                <ion-col size="12">
-                    <ion-label>
-                        <h1>{$_("identitysetup.config-storage")}</h1>
-                        <h2>{$_("identitysetup.config-storage-msg")}</h2>
-                    </ion-label>
-                    {#if component.isHiveVaultReady()}
-                        <ion-icon
-                            class="done"
-                            name="checkmark-circle-outline"
-                        />
-                    {:else if !component.isHiveBeingConfigured()}
-                        <ion-icon class="pending" name="timer-outline" />
-                    {:else}
-                        <ion-spinner />
-                    {/if}
-                </ion-col>
-            </ion-row>
-
-            {#if !component.isEverythingReady()}
-                <div class="progress-msg">
-                    <p>{$_("identitysetup.progress-msg")}</p>
-                </div>
-            {:else}
-                <div class="done-msg">
-                    <lottie-player
-                        src="assets/animations/checkmark.json"
-                        background="transparent"
-                        speed="1"
-                        style="width: 150px; height: 150px;"
-                        autoplay
-                        loop
-                    />
-                    <p>{$_("identitysetup.done-msg")}</p>
-                </div>
-            {/if}
-        </grid>
-    {/if}
-</content>
-
-<footer class="no-border">
-    {#if !component.wasTemporaryIdentityCreationStarted()}
-        <div>
-            {#if !showSpinner && activeSlideIndex < 2}
-                <button on:click={()=>component.slideNext()}>
-                    {$_("next")}
-                </button>
-            {/if}
-            {#if !showSpinner && activeSlideIndex >= 2}
-                <button on:click={()=>component.editProfile()}>
-                    {$_("identitysetup.create-my-did")}
-                </button>
-            {/if}
-            {#if showSpinner}
-                <button disabled>
-                    <ion-spinner />
-                </button>
-            {/if}
-        </div>
-    {/if}
-
-    {#if component.suggestRestartingFromScratch}
-        <div>
-            <p>{$_("identitysetup.error-msg")}</p>
-            <button on:click={()=>component.restartProcessFromScratch()}>
-                {$_("identitysetup.restart")}
-            </button>
-        </div>
-    {/if}
-    {#if component.wasTemporaryIdentityCreationStarted() && !component.suggestRestartingFromScratch}
-        <div>
-            {#if !component.isEverythingReady()}
-                <div>
-                    <p>
-                        <strong>{component.getProgress()}</strong><span
-                            >% {$_("identitysetup.takes-long-time")}</span
-                        >
-                    </p>
-                    <ion-progress-bar
-                        mode="ios"
-                        type="determinate"
-                        value="progress"
-                    />
-                </div>
-            {:else}
-                <button on:click={()=>component.continueToOriginalLocation()}>
-                    {$_("continue")}
-                </button>
-            {/if}
-        </div>
-    {/if}
-</footer>
 
 <style type="text/scss">
     :global(.swiper-slide) {
@@ -629,3 +464,173 @@
         }
     }
 </style>
+
+<content class="text-center">
+    {#if !component.wasTemporaryIdentityCreationStarted()}
+    <Swiper bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
+    pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}>
+            <SwiperSlide>
+                <img src="assets/localidentity/icons/did.svg" alt="" />
+                <h1>{$_("welcome")}</h1>
+                <h2>{$_("my-first-did")}</h2>
+            </SwiperSlide>
+            <SwiperSlide>
+                <LottiePlayer
+                    src="assets/localidentity/animations/fingerprint.json"
+                    background="transparent"
+                    speed="1"
+                    style="width: 150px; height: 150px;"
+                    autoplay="{true}"
+                    loop="{true}"
+                />
+                <p>{$_("identitysetup.slide2-msg")}</p>
+                <p>{$_("identitysetup.slide2-msg2")}</p>
+            </SwiperSlide>
+            <SwiperSlide>
+                <LottiePlayer
+                    src="assets/localidentity/animations/device.json"
+                    background="transparent"
+                    speed="1"
+                    style="width: 300px; height: 300px;"
+                    autoplay="{true}"
+                    loop="{true}"
+                />
+                <p>
+                    {$_("identitysetup.slide3-msg")}
+                </p>
+            </SwiperSlide>
+
+            <div class="swiper-pagination" slot="pagination"></div>
+            <div class="swiper-button-next" slot="button-next"></div>
+            <div class="swiper-button-prev" slot="button-prev"></div>
+        </Swiper>
+    {:else}
+        <grid>
+            <ion-row class="steps-row">
+                <ion-col size="12">
+                    <ion-label>
+                        <h1>{$_("identitysetup.create-did")}</h1>
+                        <h2>{$_("identitysetup.create-did-msg")}</h2>
+                    </ion-label>
+                    {#if component.isLocalDIDcreated()}
+                        <ion-icon
+                            class="done"
+                            name="checkmark-circle-outline"
+                        />
+                    {:else}
+                        <ion-spinner />
+                    {/if}
+                </ion-col>
+            </ion-row>
+            <ion-icon name="arrow-down-circle-outline" />
+            <ion-row class="steps-row">
+                <ion-col size="12">
+                    <ion-label>
+                        <h1>{$_("identitysetup.publish-did")}</h1>
+                        <h2>{$_("identitysetup.publish-did-msg")}</h2>
+                    </ion-label>
+                    {#if component.isDIDOnChain()}
+                        <ion-icon
+                            class="done"
+                            name="checkmark-circle-outline"
+                        />
+                    {:else if !component.isDIDBeingPublished()}
+                        <ion-icon class="pending" name="timer-outline" />
+                    {:else if !component.isDIDOnChain()}
+                        <ion-spinner />
+                    {/if}
+                </ion-col>
+            </ion-row>
+            <ion-icon name="arrow-down-circle-outline" />
+            <ion-row class="steps-row">
+                <ion-col size="12">
+                    <ion-label>
+                        <h1>{$_("identitysetup.config-storage")}</h1>
+                        <h2>{$_("identitysetup.config-storage-msg")}</h2>
+                    </ion-label>
+                    {#if component.isHiveVaultReady()}
+                        <ion-icon
+                            class="done"
+                            name="checkmark-circle-outline"
+                        />
+                    {:else if !component.isHiveBeingConfigured()}
+                        <ion-icon class="pending" name="timer-outline" />
+                    {:else}
+                        <ion-spinner />
+                    {/if}
+                </ion-col>
+            </ion-row>
+
+            {#if !component.isEverythingReady()}
+                <div class="progress-msg">
+                    <p>{$_("identitysetup.progress-msg")}</p>
+                </div>
+            {:else}
+                <div class="done-msg">
+                    <lottie-player
+                        src="assets/animations/checkmark.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 150px; height: 150px;"
+                        autoplay
+                        loop
+                    />
+                    <p>{$_("identitysetup.done-msg")}</p>
+                </div>
+            {/if}
+        </grid>
+    {/if}
+</content>
+
+<footer class="no-border">
+    {#if !component.wasTemporaryIdentityCreationStarted()}
+        <div>
+            {#if !showSpinner && activeSlideIndex < 2}
+                <button on:click={()=>component.slideNext()}>
+                    {$_("next")}
+                </button>
+            {/if}
+            {#if !showSpinner && activeSlideIndex >= 2}
+                <button on:click={()=>component.editProfile()}>
+                    {$_("identitysetup.create-my-did")}
+                </button>
+            {/if}
+            {#if showSpinner}
+                <button disabled>
+                    <ion-spinner />
+                </button>
+            {/if}
+        </div>
+    {/if}
+
+    {#if suggestRestartingFromScratch}
+        <div>
+            <p>{$_("identitysetup.error-msg")}</p>
+            <button on:click={()=>component.restartProcessFromScratch()}>
+                {$_("identitysetup.restart")}
+            </button>
+        </div>
+    {/if}
+    {#if component.wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch}
+        <div>
+            {#if !component.isEverythingReady()}
+                <div>
+                    <p>
+                        <strong>{getProgress()}</strong><span
+                            >% {$_("identitysetup.takes-long-time")}</span
+                        >
+                    </p>
+                    <ion-progress-bar
+                        mode="ios"
+                        type="determinate"
+                        value="progress"
+                    />
+                </div>
+            {:else}
+                <button on:click={()=>component.continueToOriginalLocation()}>
+                    {$_("continue")}
+                </button>
+            {/if}
+        </div>
+    {/if}
+</footer>

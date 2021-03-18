@@ -28,6 +28,7 @@ export class Connectivity {
      */
     public setActiveConnector(connectorName: string) {
         if (connectorName == null) {
+            console.log("Forgetting the currently active connector");
             this.activeConnector = null;
         }
         else {

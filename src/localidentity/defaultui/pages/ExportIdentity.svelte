@@ -1,4 +1,6 @@
 <script lang="ts">
+import { onMount } from 'svelte';
+
     import { _ } from 'svelte-i18n';
     import { connectivity } from '../../..';
     import { globalThemeService } from '../../../services/global.theme.service';
@@ -11,28 +13,6 @@ import { identityService } from '../../services/identity.service';
 
     class ExportIdentityComponent {
         //private titleBarListener: (icon: TitleBarPlugin.TitleBarIcon) => void = null;
-
-        async ionViewWillEnter() {
-            /* TODO titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
-            titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-            key: "back",
-            iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
-
-            this.titleBarListener = (icon: TitleBarPlugin.TitleBarIcon) => {
-            if (icon.key == "back")
-                this.navCtrl.back();
-            };
-            titleBarManager.addOnItemClickedListener(this.titleBarListener);*/
-
-            // Get the DID string info
-            let did = await identityService.getLocalDID();
-            didString = did.getDIDString();
-
-            // Get the DID mnemonic info
-            mnemonicWords = await identityService.getDIDMnemonic();
-        }
 
         /* TODO ionViewWillLeave() {
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
@@ -76,6 +56,28 @@ import { identityService } from '../../services/identity.service';
     }
 
     let component = new ExportIdentityComponent();
+
+    onMount(async ()=>{
+            /* TODO titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
+            titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
+            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
+            key: "back",
+            iconPath: TitleBarPlugin.BuiltInIcon.BACK
+            });
+
+            this.titleBarListener = (icon: TitleBarPlugin.TitleBarIcon) => {
+            if (icon.key == "back")
+                this.navCtrl.back();
+            };
+            titleBarManager.addOnItemClickedListener(this.titleBarListener);*/
+
+            // Get the DID string info
+            let did = await identityService.getLocalDID();
+            didString = did.getDIDString();
+
+            // Get the DID mnemonic info
+            mnemonicWords = await identityService.getDIDMnemonic();
+    });
 </script>
 
 <style lang="scss">

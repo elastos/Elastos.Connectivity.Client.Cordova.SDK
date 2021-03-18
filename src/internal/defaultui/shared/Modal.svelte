@@ -165,7 +165,6 @@ import type { ModalCallbacks } from './modalcallbacks';
 
   $: {
     if (isFunction(show)) {
-      console.log("SHOW", show);
       open(show);
     } else {
       close();
