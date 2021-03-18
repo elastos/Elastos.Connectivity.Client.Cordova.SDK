@@ -16,6 +16,9 @@
     import { hiveService } from '../../services/hive.service';
     import { persistenceService } from '../../services/persistence.service';
     import { globalStorageService } from '../../../services/global.storage.service';
+    import { navService } from '../nav.service';
+    import { ViewType } from '../viewtype';
+    import type { EditProfileNavParams } from '../navparams';
 
     // https://swiperjs.com/swiper-api#custom-build
     SwiperCore.use([Navigation, Pagination, Scrollbar]);
@@ -60,151 +63,146 @@
         }
 
         async editProfile() {
-            /* TODO const modal = await this.modalCtrl.create({
-            component: EditProfileComponent,
-            componentProps: {
-                from: Page.IDENTITYSETUP
-            },
-            cssClass: 'fullscreen'
-            });
-            modal.onDidDismiss().then((params) => {
-            if(params.data) {
-                if(params.data.profileFilled) {
-                this.showSpinner = true;
-                this.newDID();
+            navService.navigateTo(ViewType.EditProfile, {
+                useExistingProfileInfo: false,
+                onCompletion: (profileFilled) => {
+                    if (profileFilled) {
+                        showSpinner = true;
+                        this.newDID();
+                    }
                 }
-            }
-            });
-            await modal.present()*/
+            } as EditProfileNavParams);
         }
 
         /**
          * Continues the identity creation process where it was stopped.
          */
         async resumeIdentitySetupFlow() {
-        await new Promise<void>((resolve)=>{
-        setTimeout(async ()=>{
-            try {
-                // Local DID creation
-                if (!this.isLocalDIDcreated()) {
-                    this.progress = 0.01;
-                    await identityService.createLocalIdentity();
-                }
+            console.log("Resuming identity setup flow");
 
-                if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
-                    this.progress = 0.01;
-                    let interval = setInterval(() => {
-                    if(this.progress >= 0.90) {
-                        clearInterval(interval);
-                    } else {
-                        this.progress += 0.01;
-                        globalStorageService.set('progressDate', new Date());
-                        globalStorageService.set('progress', this.progress);
+            await new Promise<void>((resolve)=>{
+                setTimeout(async ()=>{
+                    try {
+                        // Local DID creation
+                        if (!this.isLocalDIDcreated()) {
+                            this.progress = 0.01;
+                            await identityService.createLocalIdentity();
+                        }
+
+                        if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
+                            this.progress = 0.01;
+                            let interval = setInterval(() => {
+                            if(this.progress >= 0.90) {
+                                clearInterval(interval);
+                            } else {
+                                this.progress += 0.01;
+                                globalStorageService.set('progressDate', new Date());
+                                globalStorageService.set('progress', this.progress);
+                            }
+                            }, 10000);
+                            await identityService.publishIdentity();
+                        }
+
+                        if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
+                            const progressDate = await globalStorageService.get('progressDate', null);
+                            const progress = parseFloat(await globalStorageService.get('progress', null));
+                            let newProgress: number = null;
+
+                            // If progress was previously initiated before starting app
+                            if(progressDate && progress) {
+                            console.log('Last progress time', moment(progressDate).format('LT'));
+                            console.log('Left off at progress', progress);
+
+                            // Get saved date
+                            const before = moment(progressDate);
+                            const now = moment(new Date());
+                            // Find duration in seconds between saved date and now
+                            const duration = moment.duration(now.diff(before));
+                            const durationInSeconds = duration.asSeconds();
+                            console.log('Progress in between in seconds', durationInSeconds);
+                            // Divide duration in a way progress can handle. ex: 10 seconds / 1000 = 0.01 which is 1%
+                            const additionalProgress = durationInSeconds / 1000;
+                            console.log('Progress while user was absent', additionalProgress);
+                            // Add new progress to saved progress
+                            newProgress = additionalProgress + progress;
+                            }
+
+                            if(newProgress && newProgress <= 0.9) {
+                            this.progress = newProgress
+                            } else if(this.progress >= 0.9) {
+                            this.progress = 0.9;
+                            } else {
+                            this.progress = 0.01;
+                            }
+
+                            console.log('Progress', this.progress);
+                            let interval = setInterval(() => {
+                            if(this.progress >= 0.90) {
+                                clearInterval(interval);
+                            } else {
+                                this.progress += 0.01;
+                                globalStorageService.set('progressDate', new Date());
+                                globalStorageService.set('progress', this.progress);
+                            }
+                            }, 10000);
+                            await this.repeatinglyCheckAssistPublicationStatus();
+                        }
+
+                        if (!this.isHiveVaultReady()) {
+                            this.progress = 0.90;
+                            let interval = setInterval(() => {
+                            if(this.progress >= 0.99) {
+                                clearInterval(interval);
+                            } else {
+                                this.progress += 0.01;
+                            }
+                            }, 10000);
+                            await this.prepareHiveVault();
+                        }
                     }
-                    }, 10000);
-                    await identityService.publishIdentity();
-                }
-
-                if (!this.isDIDOnChain() && this.isDIDBeingPublished()) {
-                    const progressDate = await globalStorageService.get('progressDate', null);
-                    const progress = parseFloat(await globalStorageService.get('progress', null));
-                    let newProgress: number = null;
-
-                    // If progress was previously initiated before starting app
-                    if(progressDate && progress) {
-                    console.log('Last progress time', moment(progressDate).format('LT'));
-                    console.log('Left off at progress', progress);
-
-                    // Get saved date
-                    const before = moment(progressDate);
-                    const now = moment(new Date());
-                    // Find duration in seconds between saved date and now
-                    const duration = moment.duration(now.diff(before));
-                    const durationInSeconds = duration.asSeconds();
-                    console.log('Progress in between in seconds', durationInSeconds);
-                    // Divide duration in a way progress can handle. ex: 10 seconds / 1000 = 0.01 which is 1%
-                    const additionalProgress = durationInSeconds / 1000;
-                    console.log('Progress while user was absent', additionalProgress);
-                    // Add new progress to saved progress
-                    newProgress = additionalProgress + progress;
+                    catch (e) {
+                        // Catch all unhandled exceptions. When this happens, we:
+                        // TODO 1) send a silent sentry report to be able to understand what's going on remotely
+                        // 2) suggest user to restart the process fresh, as something is broken.
+                        console.warn("Handled global exception:", e);
+                        this.suggestRestartingFromScratch = true;
+                        resolve();
                     }
+                }, 1000);
+            });
+        }
 
-                    if(newProgress && newProgress <= 0.9) {
-                    this.progress = newProgress
-                    } else if(this.progress >= 0.9) {
-                    this.progress = 0.9;
-                    } else {
-                    this.progress = 0.01;
-                    }
+        wasTemporaryIdentityCreationStarted(): boolean {
+            return this.isLocalDIDcreated();
+        }
 
-                    console.log('Progress', this.progress);
-                    let interval = setInterval(() => {
-                    if(this.progress >= 0.90) {
-                        clearInterval(interval);
-                    } else {
-                        this.progress += 0.01;
-                        globalStorageService.set('progressDate', new Date());
-                        globalStorageService.set('progress', this.progress);
-                    }
-                    }, 10000);
-                    await this.repeatinglyCheckAssistPublicationStatus();
-                }
+        isLocalDIDcreated(): boolean {
+            let persistenceInfo = persistenceService.getPersistentInfo();
+            return persistenceInfo.did.didString != null;
+        }
 
-                if (!this.isHiveVaultReady()) {
-                    this.progress = 0.90;
-                    let interval = setInterval(() => {
-                    if(this.progress >= 0.99) {
-                        clearInterval(interval);
-                    } else {
-                        this.progress += 0.01;
-                    }
-                    }, 10000);
-                    await this.prepareHiveVault();
-                }
-            }
-            catch (e) {
-                // Catch all unhandled exceptions. When this happens, we:
-                // TODO 1) send a silent sentry report to be able to understand what's going on remotely
-                // 2) suggest user to restart the process fresh, as something is broken.
-                console.warn("Handled global exception:", e);
-                this.suggestRestartingFromScratch = true;
-                resolve();
-            }
-        }, 1000);
-        });
-    }
+        isDIDBeingPublished(): boolean {
+            let persistenceInfo = persistenceService.getPersistentInfo();
+            return persistenceInfo.did.publicationStatus == DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
+        }
 
-    wasTemporaryIdentityCreationStarted(): boolean {
-        return this.isLocalDIDcreated();
-    }
+        isDIDOnChain(): boolean {
+            let persistenceInfo = persistenceService.getPersistentInfo();
+            return persistenceInfo.did.publicationStatus == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
+        }
 
-    isLocalDIDcreated(): boolean {
-        let persistenceInfo = persistenceService.getPersistentInfo();
-        return persistenceInfo.did.didString != null;
-    }
+        isHiveVaultReady(): boolean {
+            let persistenceInfo = persistenceService.getPersistentInfo();
+            return persistenceInfo.hive.creationStatus == HiveCreationStatus.VAULT_CREATED_AND_VERIFIED;
+        }
 
-    isDIDBeingPublished(): boolean {
-        let persistenceInfo = persistenceService.getPersistentInfo();
-        return persistenceInfo.did.publicationStatus == DIDPublicationStatus.AWAITING_PUBLICATION_CONFIRMATION;
-    }
+        isHiveBeingConfigured(): boolean {
+            return this.hiveIsBeingConfigured;
+        }
 
-    isDIDOnChain(): boolean {
-        let persistenceInfo = persistenceService.getPersistentInfo();
-        return persistenceInfo.did.publicationStatus == DIDPublicationStatus.PUBLISHED_AND_CONFIRMED;
-    }
-
-    isHiveVaultReady(): boolean {
-        let persistenceInfo = persistenceService.getPersistentInfo();
-        return persistenceInfo.hive.creationStatus == HiveCreationStatus.VAULT_CREATED_AND_VERIFIED;
-    }
-
-    isHiveBeingConfigured(): boolean {
-        return this.hiveIsBeingConfigured;
-    }
-
-    isEverythingReady(): boolean {
-        return this.isHiveVaultReady();
-    }
+        isEverythingReady(): boolean {
+            return this.isHiveVaultReady();
+        }
 
         async prepareHiveVault() {
             this.hiveIsBeingConfigured = true;
@@ -273,8 +271,6 @@
             return percent.toFixed(0);
         }
     }
-
-    console.log("CREATING")
 
     let component = new IdentitySetupComponent();
 
@@ -408,12 +404,12 @@
     {#if !component.wasTemporaryIdentityCreationStarted()}
         <div>
             {#if !showSpinner && activeSlideIndex < 2}
-                <button on:click={component.slideNext}>
+                <button on:click={()=>component.slideNext()}>
                     {$_("next")}
                 </button>
             {/if}
             {#if !showSpinner && activeSlideIndex >= 2}
-                <button on:click={component.editProfile}>
+                <button on:click={()=>component.editProfile()}>
                     {$_("identitysetup.create-my-did")}
                 </button>
             {/if}
@@ -428,7 +424,7 @@
     {#if component.suggestRestartingFromScratch}
         <div>
             <p>{$_("identitysetup.error-msg")}</p>
-            <button on:click={component.restartProcessFromScratch}>
+            <button on:click={()=>component.restartProcessFromScratch()}>
                 {$_("identitysetup.restart")}
             </button>
         </div>
@@ -449,7 +445,7 @@
                     />
                 </div>
             {:else}
-                <button on:click={component.continueToOriginalLocation}>
+                <button on:click={()=>component.continueToOriginalLocation()}>
                     {$_("continue")}
                 </button>
             {/if}
@@ -532,7 +528,7 @@
             font-weight: 500;
         }
 
-        .grid {
+        grid {
             height: 100%;
             padding: 10px 20px;
 

@@ -168,7 +168,7 @@ export class DIDAccess {
     public fastCreateDID(language: DIDPlugin.MnemonicLanguage): Promise<FastDIDCreationResult> {
         this.helper.logger.log("Fast DID creation with language "+language);
 
-        return new Promise((resolve)=>{
+        return new Promise((resolve, reject)=>{
             didManager.generateMnemonic(language, (mnemonic)=>{
                 let didStoreId = Utils.generateRandomDIDStoreId();
                 didManager.initDidStore(didStoreId, (payload: string, memo: string) =>{
@@ -197,6 +197,9 @@ export class DIDAccess {
                     this.helper.logger.error(err);
                     resolve(null);
                 });
+            }, (err)=>{
+                this.helper.logger.error(err);
+                resolve(null);
             });
         });
     }

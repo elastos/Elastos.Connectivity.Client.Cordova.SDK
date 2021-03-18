@@ -9,18 +9,22 @@
 <script lang="ts">
     import { ViewType } from "../viewtype";
     import IdentitySetup from "./IdentitySetup.svelte";
-    import { viewType } from "../localidstores";
+    import EditProfile from "./EditProfile.svelte";
+    import { navigatedView } from "../localidstores";
+    import type { NavigatedView } from "../navigatedview";
 
-    export let activeViewType: ViewType | null = ViewType.None;
+    export let activeView: NavigatedView = { viewType: ViewType.None };
 
-    viewType.subscribe((newViewType)=>{
-        console.log("Active view type changed:", newViewType);
-        activeViewType = newViewType;
+    navigatedView.subscribe((newView)=>{
+        console.log("[RootComponent] Active view changed:", newView);
+        activeView = newView;
     })
 </script>
 
-{#if activeViewType == ViewType.IdentitySetup }
+{#if activeView.viewType == ViewType.IdentitySetup }
 <IdentitySetup></IdentitySetup>
+{:else if activeView.viewType == ViewType.EditProfile }
+<EditProfile></EditProfile>
 {:else}
 Nothing here
 {/if}

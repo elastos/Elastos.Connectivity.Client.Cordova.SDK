@@ -3,8 +3,9 @@ import { globalModalService } from "../../services/global.modal.service";
 import OnBoarding from "./pages/OnBoarding.svelte";
 import IdentitySetup from "./pages/IdentitySetup.svelte";
 import Root from './pages/Root.svelte';
-import { viewType } from './localidstores';
+import { navigatedView } from './localidstores';
 import { ViewType } from "./viewtype";
+import { navService } from "./nav.service";
 
 export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     private localIdentityModalShown = false;
@@ -51,7 +52,7 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         console.log("Local identity: showCreateIdentity()");
         await this.showRootComponentInModal();
         console.log("Setting view type to IdentitySetup");
-        viewType.set(ViewType.IdentitySetup);
+        navService.navigateTo(ViewType.IdentitySetup);
     }
 
     showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {

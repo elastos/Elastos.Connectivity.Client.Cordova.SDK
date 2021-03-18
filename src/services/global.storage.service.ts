@@ -21,6 +21,14 @@ class GlobalStorageService {
   public async get(key: string, defaultValue: string | null): Promise<string> {
     return this.storageLayer.get(key, defaultValue);
   }
+
+  public setJSON(key: string, value: any): Promise<void> {
+    return this.storageLayer.set(key, JSON.stringify(value));
+  }
+
+  public async getJSON(key: string, defaultValue: Object | null): Promise<any> {
+    return JSON.parse(await this.storageLayer.get(key, JSON.stringify(defaultValue)));
+  }
 }
 
 export const globalStorageService = new GlobalStorageService();
