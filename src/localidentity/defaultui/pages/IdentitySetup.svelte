@@ -18,7 +18,7 @@
     import { globalStorageService } from '../../../services/global.storage.service';
     import { navService } from '../nav.service';
     import { ViewType } from '../viewtype';
-    import type { EditProfileNavParams } from '../navparams';
+    import type { EditProfileNavParams, IdentitySetupNavParams } from '../navparams';
 
     // https://swiperjs.com/swiper-api#custom-build
     SwiperCore.use([Navigation, Pagination, Scrollbar]);
@@ -42,6 +42,7 @@
     let suggestRestartingFromScratch = false;
     let hiveIsBeingConfigured = false;
     let progress = 0;
+    let navParams: IdentitySetupNavParams;
 
     class IdentitySetupComponent {
         // On init
@@ -64,10 +65,12 @@
         async editProfile() {
             navService.navigateTo(ViewType.EditProfile, {
                 useExistingProfileInfo: false,
-                onCompletion: (profileFilled) => {
+                onCompletion: async (profileFilled) => {
                     if (profileFilled) {
                         showSpinner = true;
-                        this.newDID();
+                        await identityService.createLocalIdentity();
+                        console.log("New DID created, returning to identity setup");
+                        navService.navigateTo(ViewType.IdentitySetup);
                     }
                 }
             } as EditProfileNavParams);
@@ -85,19 +88,22 @@
                         // Local DID creation
                         if (!this.isLocalDIDcreated()) {
                             progress = 0.01;
+                            componentChanged();
                             await identityService.createLocalIdentity();
                         }
 
                         if (!this.isDIDOnChain() && !this.isDIDBeingPublished()) {
                             progress = 0.01;
+                            componentChanged();
                             let interval = setInterval(() => {
-                            if(progress >= 0.90) {
-                                clearInterval(interval);
-                            } else {
-                                progress += 0.01;
-                                globalStorageService.set('progressDate', new Date());
-                                globalStorageService.set('progress', progress);
-                            }
+                                if(progress >= 0.90) {
+                                    clearInterval(interval);
+                                } else {
+                                    progress += 0.01;
+                                    componentChanged();
+                                    globalStorageService.set('progressDate', new Date());
+                                    globalStorageService.set('progress', progress);
+                                }
                             }, 10000);
                             await identityService.publishIdentity();
                         }
@@ -109,21 +115,21 @@
 
                             // If progress was previously initiated before starting app
                             if(progressDate && storageProgress) {
-                            console.log('Last progress time', moment(progressDate).format('LT'));
-                            console.log('Left off at progress', storageProgress);
+                                console.log('Last progress time', moment(progressDate).format('LT'));
+                                console.log('Left off at progress', storageProgress);
 
-                            // Get saved date
-                            const before = moment(progressDate);
-                            const now = moment(new Date());
-                            // Find duration in seconds between saved date and now
-                            const duration = moment.duration(now.diff(before));
-                            const durationInSeconds = duration.asSeconds();
-                            console.log('Progress in between in seconds', durationInSeconds);
-                            // Divide duration in a way progress can handle. ex: 10 seconds / 1000 = 0.01 which is 1%
-                            const additionalProgress = durationInSeconds / 1000;
-                            console.log('Progress while user was absent', additionalProgress);
-                            // Add new progress to saved progress
-                            newProgress = additionalProgress + storageProgress;
+                                // Get saved date
+                                const before = moment(progressDate);
+                                const now = moment(new Date());
+                                // Find duration in seconds between saved date and now
+                                const duration = moment.duration(now.diff(before));
+                                const durationInSeconds = duration.asSeconds();
+                                console.log('Progress in between in seconds', durationInSeconds);
+                                // Divide duration in a way progress can handle. ex: 10 seconds / 1000 = 0.01 which is 1%
+                                const additionalProgress = durationInSeconds / 1000;
+                                console.log('Progress while user was absent', additionalProgress);
+                                // Add new progress to saved progress
+                                newProgress = additionalProgress + storageProgress;
                             }
 
                             if(newProgress && newProgress <= 0.9) {
@@ -133,28 +139,32 @@
                             } else {
                                 progress = 0.01;
                             }
+                            componentChanged();
 
                             console.log('Progress', progress);
                             let interval = setInterval(() => {
-                            if(progress >= 0.90) {
-                                clearInterval(interval);
-                            } else {
-                                progress += 0.01;
-                                globalStorageService.set('progressDate', new Date());
-                                globalStorageService.set('progress', progress);
-                            }
-                            }, 10000);
+                                if(progress >= 0.90) {
+                                    clearInterval(interval);
+                                } else {
+                                    progress += 0.01;
+                                    componentChanged();
+                                    globalStorageService.set('progressDate', new Date());
+                                    globalStorageService.set('progress', progress);
+                                }
+                                }, 10000);
                             await this.repeatinglyCheckAssistPublicationStatus();
                         }
 
                         if (!this.isHiveVaultReady()) {
                             progress = 0.90;
+                            componentChanged();
                             let interval = setInterval(() => {
-                            if(progress >= 0.99) {
-                                clearInterval(interval);
-                            } else {
-                                progress += 0.01;
-                            }
+                                if(progress >= 0.99) {
+                                    clearInterval(interval);
+                                } else {
+                                    progress += 0.01;
+                                    componentChanged();
+                                }
                             }, 10000);
                             await this.prepareHiveVault();
                         }
@@ -252,8 +262,7 @@
          * been at first, if the identity existed.
          */
         continueToOriginalLocation() {
-            // NOTE: For now, we always consider we are coming from a "credaccess" intent request. To be improved later.
-            // TODO this.navCtrl.navigateRoot("credaccess");
+            navParams.onIdentityCreationCompleted();
         }
 
         /**
@@ -273,14 +282,20 @@
 
     let component = new IdentitySetupComponent();
 
-    function getProgress() {
-        // TODO: SHOULD BE IN THE COMPONENT, JUST CHECKING WHY SVELTE DOESN'T DETECTED
-        // CHANGES IN THE COMPONENT CLASS
-        return component.getProgress();
+    // Dirty hack to kind of make svelte reactive on some component fields changes
+    let componentWasChanged = null;
+    function componentChanged() {
+        componentWasChanged = Math.random();
+    }
+
+    $: componentWatcher = (field)=>{
+        let dummy = componentWasChanged; // Keep this line
+        return component[field]();
     }
 
     onMount(async () => {
-        console.log("Mouting IdentitySetup component");
+        console.log("Mounting IdentitySetup component");
+        navParams = navService.activeView.params as IdentitySetupNavParams;
 		if (!component.isEverythingReady() && component.wasTemporaryIdentityCreationStarted()) {
             // Basic Identity configuration is not complete. So we are going to resume at the step we were earlier.
             component.resumeIdentitySetupFlow();
@@ -466,7 +481,7 @@
 </style>
 
 <content class="text-center">
-    {#if !component.wasTemporaryIdentityCreationStarted()}
+    {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
     <Swiper bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
     pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}>
             <SwiperSlide>
@@ -512,7 +527,7 @@
                         <h1>{$_("identitysetup.create-did")}</h1>
                         <h2>{$_("identitysetup.create-did-msg")}</h2>
                     </ion-label>
-                    {#if component.isLocalDIDcreated()}
+                    {#if componentWatcher("isLocalDIDcreated")}
                         <ion-icon
                             class="done"
                             name="checkmark-circle-outline"
@@ -529,14 +544,14 @@
                         <h1>{$_("identitysetup.publish-did")}</h1>
                         <h2>{$_("identitysetup.publish-did-msg")}</h2>
                     </ion-label>
-                    {#if component.isDIDOnChain()}
+                    {#if componentWatcher("isDIDOnChain")}
                         <ion-icon
                             class="done"
                             name="checkmark-circle-outline"
                         />
-                    {:else if !component.isDIDBeingPublished()}
+                    {:else if !componentWatcher("isDIDBeingPublished")}
                         <ion-icon class="pending" name="timer-outline" />
-                    {:else if !component.isDIDOnChain()}
+                    {:else if !componentWatcher("isDIDOnChain")}
                         <ion-spinner />
                     {/if}
                 </ion-col>
@@ -548,12 +563,12 @@
                         <h1>{$_("identitysetup.config-storage")}</h1>
                         <h2>{$_("identitysetup.config-storage-msg")}</h2>
                     </ion-label>
-                    {#if component.isHiveVaultReady()}
+                    {#if componentWatcher("isHiveVaultReady")}
                         <ion-icon
                             class="done"
                             name="checkmark-circle-outline"
                         />
-                    {:else if !component.isHiveBeingConfigured()}
+                    {:else if !componentWatcher("isHiveBeingConfigured")}
                         <ion-icon class="pending" name="timer-outline" />
                     {:else}
                         <ion-spinner />
@@ -561,19 +576,19 @@
                 </ion-col>
             </ion-row>
 
-            {#if !component.isEverythingReady()}
+            {#if !componentWatcher("isEverythingReady")}
                 <div class="progress-msg">
                     <p>{$_("identitysetup.progress-msg")}</p>
                 </div>
             {:else}
                 <div class="done-msg">
-                    <lottie-player
-                        src="assets/animations/checkmark.json"
+                    <LottiePlayer
+                        src="assets/localidentity/animations/checkmark.json"
                         background="transparent"
                         speed="1"
                         style="width: 150px; height: 150px;"
-                        autoplay
-                        loop
+                        autoplay={true}
+                        loop={true}
                     />
                     <p>{$_("identitysetup.done-msg")}</p>
                 </div>
@@ -583,7 +598,7 @@
 </content>
 
 <footer class="no-border">
-    {#if !component.wasTemporaryIdentityCreationStarted()}
+    {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
         <div>
             {#if !showSpinner && activeSlideIndex < 2}
                 <button on:click={()=>component.slideNext()}>
@@ -611,15 +626,16 @@
             </button>
         </div>
     {/if}
-    {#if component.wasTemporaryIdentityCreationStarted() && !suggestRestartingFromScratch}
+    {#if componentWatcher("wasTemporaryIdentityCreationStarted") && !suggestRestartingFromScratch}
         <div>
-            {#if !component.isEverythingReady()}
+            {#if !componentWatcher("isEverythingReady")}
                 <div>
                     <p>
-                        <strong>{getProgress()}</strong><span
+                        <strong>{componentWatcher("getProgress")}</strong><span
                             >% {$_("identitysetup.takes-long-time")}</span
                         >
                     </p>
+                    <!-- TODO -->
                     <ion-progress-bar
                         mode="ios"
                         type="determinate"
