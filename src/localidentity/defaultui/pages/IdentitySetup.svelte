@@ -5,7 +5,7 @@
     import { Swiper, SwiperSlide } from 'swiper/svelte';
     import SwiperCore, { Navigation, Pagination, Scrollbar } from 'swiper/core';
     import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
-
+    
     // https://swiperjs.com/svelte
 
     import { DIDPublicationStatus } from '../../model/didpublicationstatus.model';
@@ -380,20 +380,25 @@
 
         grid {
             height: 100%;
-            padding: 10px 20px;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
 
             ion-icon, ion-spinner {
-            width: 25px;
-            height: 25px;
-            color: #732dcf;
+                width: 25px;
+                height: 25px;
+                color: #732dcf;
             }
 
             .steps-row {
-            border-radius: 17px;
-            padding: 10px;
-            margin-bottom: 7.5px;
-            box-shadow: 0 3px 15px 0 #ededf0;
-            background-color: #ffffff;
+                border-radius: 17px;
+                padding: 10px;
+                margin: 7.5px 0;
+                box-shadow: 0 3px 15px 0 #ededf0;
+                width: 100%;
+                background-color: #ffffff;
 
             ion-col {
                 display: flex;
@@ -474,8 +479,13 @@
         };
 
         button {
-            padding:20px;
-            background: #a9c5eb;
+            height: 50px;
+            width: 100%;
+            background: linear-gradient(to bottom, #732dcf, #640fd4);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
         }
     }
 </style>

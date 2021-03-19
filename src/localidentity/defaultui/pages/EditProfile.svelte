@@ -60,25 +60,38 @@
 
 <style lang="scss">
     .container {
-        padding: 20px;
         margin: 0;
 
         input {
             background: #f0f1ff;
             height: 50px;
             border-radius: 8px;
+            border: none;
             font-size: 14px;
             width: 100%;
-            --padding-start: 12px;
-            margin-bottom: 15px;
+            padding: 0 0 0 12px;
+            margin-bottom: 10px;
         }
 
         p {
             margin: 0;
-            padding-top: 10px;
+            padding: 10px;
             font-size: 12px;
             font-weight: 600;
+            text-align: center;
         };
+    }
+
+    footer {
+        button {
+            height: 50px;
+            width: 100%;
+            background: linear-gradient(to bottom, #732dcf, #640fd4);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
     }
 
     .dark-container {
@@ -94,7 +107,7 @@
     <input placeholder="{$_('edit-profile.enter-email')}" type="email" bind:value={email}/>
 
     {#if navParams && navParams.useExistingProfileInfo}
-    <p class="text-center">{$_('edit-profile.message')}}</p>
+    <p class="text-center">{$_('edit-profile.message')}</p>
     {/if}
 </grid>
 

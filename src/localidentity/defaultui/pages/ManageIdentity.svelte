@@ -60,6 +60,23 @@
         font-weight: 500;
     }
 }
+
+footer {
+    button {
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(to bottom, #732dcf, #640fd4);
+        color: white;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .first-btn {
+        margin-bottom: 5px;
+    }
+}
+
 </style>
 
 <content class="ion-text-center">
@@ -73,6 +90,6 @@
 </content>
 
 <footer class="ion-no-border">
-    <button on:click={()=>component.editProfile()}>{$_('manageidentity.edit-profile')}</button>
+    <button class="first-btn" on:click={()=>component.editProfile()}>{$_('manageidentity.edit-profile')}</button>
     <button on:click={()=>component.exportIdentity()}>{$_('manageidentity.export-did')}</button>
 </footer>

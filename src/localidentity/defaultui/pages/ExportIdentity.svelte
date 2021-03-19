@@ -18,7 +18,7 @@ import { identityService } from '../../services/identity.service';
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
             titleBarManager.removeOnItemClickedListener(this.titleBarListener);
             this.titleBarListener = null;
-        }*/
+        }*/ 
 
         public showMnemonic() {
             hideMnemonic = !hideMnemonic;
@@ -33,9 +33,9 @@ import { identityService } from '../../services/identity.service';
         }
 
         public async copyMnemonicToClipboard() {
-            /* TODO await this.clipboard.copy(this.mnemonicWords);
+            await this.clipboard.copy(this.mnemonicWords);
             this.toast('copied');
-            this.mnemonicCopiedToClipboard = true;*/
+            this.mnemonicCopiedToClipboard = true;
         }
 
         public async copyDIDStringToClipboard() {
@@ -81,8 +81,19 @@ import { identityService } from '../../services/identity.service';
 </script>
 
 <style lang="scss">
+    button {
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(to bottom, #732dcf, #640fd4);
+        color: white;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
     .container {
         height: 100%;
+        width: 100%;
         padding: 10px 20px;
         display: flex;
         flex-direction: column;
@@ -91,6 +102,7 @@ import { identityService } from '../../services/identity.service';
 
         row {
             padding: 0 0 20px;
+            width: 100%;
 
             col {
                 h1 {
