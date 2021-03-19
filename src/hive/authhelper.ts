@@ -4,6 +4,7 @@ import { DIDAccess } from "../did";
 import { DefaultLogger } from "../internal/defaultlogger";
 import { DIDHelper } from "../did/internal/didhelper";
 import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
+import { ConnectivityHelper } from "../internal/connectivityhelper";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
@@ -28,47 +29,51 @@ export class AuthHelper {
    */
   public getClientWithAuth(onAuthError?: (e: Error)=>void): Promise<HivePlugin.Client> {
     return new Promise(async (resolve)=>{
-      this.didAccess = new DIDAccess();
-      this.didAccess.setLogger(this.logger);
+      ConnectivityHelper.ensureActiveConnector(async ()=>{
+        this.didAccess = new DIDAccess();
+        this.didAccess.setLogger(this.logger);
 
-      let authHelper = this;
+        let authHelper = this;
 
-      // Initiate or retrieve an application instance DID. This DID is used to sign authentication content
-      // for hive. Hive uses the given app instance DID document to verify JWTs received later, using an unpublished
-      // app instance DID.
-      this.logger.log("Getting an app instance DID");
-      let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
+        // Initiate or retrieve an application instance DID. This DID is used to sign authentication content
+        // for hive. Hive uses the given app instance DID document to verify JWTs received later, using an unpublished
+        // app instance DID.
+        this.logger.log("Getting an app instance DID");
+        let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
 
-      this.logger.log("Getting app instance DID document");
-      appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument)=>{
-        this.logger.log("Got app instance DID document. Now creating the Hive client", didDocument);
-        let client = await hiveManager.getClient({
-          authenticationHandler: new class AuthenticationHandler implements HivePlugin.AuthenticationHandler {
-            /**
-             * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
-             * The returned data must be a verifiable presentation, signed by the app instance DID, and
-             * including a appid certification credential provided by the identity application.
-             */
-            async authenticationChallenge(jwtToken: string): Promise<string> {
-              authHelper.logger.log("Hive client authentication challenge callback is being called with token:", jwtToken);
-              try {
-                return await authHelper.handleVaultAuthenticationChallenge(jwtToken);
+        this.logger.log("Getting app instance DID document");
+        appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument)=>{
+          this.logger.log("Got app instance DID document. Now creating the Hive client", didDocument);
+          let client = await hiveManager.getClient({
+            authenticationHandler: new class AuthenticationHandler implements HivePlugin.AuthenticationHandler {
+              /**
+               * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
+               * The returned data must be a verifiable presentation, signed by the app instance DID, and
+               * including a appid certification credential provided by the identity application.
+               */
+              async authenticationChallenge(jwtToken: string): Promise<string> {
+                authHelper.logger.log("Hive client authentication challenge callback is being called with token:", jwtToken);
+                try {
+                  return await authHelper.handleVaultAuthenticationChallenge(jwtToken);
+                }
+                catch (e) {
+                  authHelper.logger.error("Exception in authentication handler:", e);
+                  if (onAuthError)
+                    onAuthError(e);
+                  return null;
+                }
               }
-              catch (e) {
-                authHelper.logger.error("Exception in authentication handler:", e);
-                if (onAuthError)
-                  onAuthError(e);
-                return null;
-              }
-            }
-          },
-          authenticationDIDDocument: await didDocument.toJson()
+            },
+            authenticationDIDDocument: await didDocument.toJson()
+          });
+
+          this.logger.log("Hive client initialization completed");
+          resolve(client);
+        }, (err)=>{
+          this.logger.error(err);
         });
-
-        this.logger.log("Hive client initialization completed");
-        resolve(client);
-      }, (err)=>{
-        this.logger.error(err);
+      }, ()=>{
+        resolve(null);
       });
     });
   }

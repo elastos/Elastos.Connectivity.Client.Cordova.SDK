@@ -397,7 +397,8 @@ class IdentityService {
           case "email":
             properties.email = localEmail ? localEmail : "unknown@email.com";
           default:
-            // Empty properties
+            // Unhandled properties. Credential properties cannot be empty, so we fill that with dummy data.
+            properties[claimName] = "Information not provided";
         }
 
         return new Promise((resolve)=>{

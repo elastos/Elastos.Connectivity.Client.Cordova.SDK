@@ -3,6 +3,7 @@ import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../interfaces/ilogger";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
 import { DefaultLogger } from "../internal/defaultlogger";
+import { globalStorageService } from "../services/global.storage.service";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./internal/didhelper";
 import { Utils } from "./utils";
@@ -141,9 +142,9 @@ export class DIDAccess {
      * Retrieve information about existing app instance info from permanent storage, if any.
      */
     public async getExistingAppInstanceDIDInfo(): Promise<{storeId: string, didString: string, storePassword: string}> {
-        let storeId = await this.helper.getAppManagerSetting("dappsdk_appinstancedidstoreid", null)
-        let didString = await this.helper.getAppManagerSetting("dappsdk_appinstancedidstring", null)
-        let storePassword = await this.helper.getAppManagerSetting("dappsdk_appinstancedidstorepassword", null)
+        let storeId = await globalStorageService.get("dappsdk_appinstancedidstoreid", null, true)
+        let didString = await globalStorageService.get("dappsdk_appinstancedidstring", null, true)
+        let storePassword = await globalStorageService.get("dappsdk_appinstancedidstorepassword", null, true)
 
         if (storeId && didString) {
             return {

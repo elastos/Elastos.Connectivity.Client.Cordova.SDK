@@ -5,6 +5,7 @@ import { DefaultLogger } from "../../internal/defaultlogger";
 import { Utils } from "../utils";
 import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
 import { globalStorageService } from "../../services/global.storage.service";
+import type { IConnector } from "../../interfaces/connectors";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -24,11 +25,20 @@ export class DIDHelper {
      * Saves app instance did info to permanent storage.
      */
     public async saveAppInstanceDIDInfo(storeId: string, didString: string, storePassword: string): Promise<void> {
-        await this.setAppManagerSetting("dappsdk_appinstancedidstoreid", storeId);
-        await this.setAppManagerSetting("dappsdk_appinstancedidstring", didString);
+        await globalStorageService.set("dappsdk_appinstancedidstoreid", storeId, true);
+        await globalStorageService.set("dappsdk_appinstancedidstring", didString, true);
         // TODO: Devices with biometric auth enabled may use the password manager to save this password
         // more securely than in local storage.
-        await this.setAppManagerSetting("dappsdk_appinstancedidstorepassword", storePassword);
+        await globalStorageService.set("dappsdk_appinstancedidstorepassword", storePassword, true);
+    }
+
+    /**
+     * Deletes any data about the active connector context
+     */
+    public async cleanupConnectorContext(connector: IConnector) {
+        await globalStorageService.unset("dappsdk_appinstancedidstoreid", true);
+        await globalStorageService.unset("dappsdk_appinstancedidstring", true);
+        await globalStorageService.unset("dappsdk_appinstancedidstorepassword", true);
     }
 
     /**
@@ -36,20 +46,6 @@ export class DIDHelper {
      */
     public generateRandomPassword(): string {
         return Utils.generateRandomDIDStoreId();
-    }
-
-    /**
-     * Convenient way to retrieve settings from the app manager plugin.
-     */
-    public getAppManagerSetting(settingName: string, defaultValue: string): Promise<string> {
-        return globalStorageService.get(settingName, defaultValue);
-    }
-
-    /**
-     * Convenient way to save settings to the app manager plugin.
-     */
-    public setAppManagerSetting(settingName: string, value: string): Promise<void> {
-        return globalStorageService.set(settingName, value);
     }
 
     /**

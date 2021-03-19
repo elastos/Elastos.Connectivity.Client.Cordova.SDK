@@ -15,4 +15,8 @@ export class DefaultKeyValueStorage implements IKeyValueStorage {
         else
             return defaultValue;
     }
+
+    async unset(key: string): Promise<void> {
+        window.localStorage.removeItem(key);
+    }
 }

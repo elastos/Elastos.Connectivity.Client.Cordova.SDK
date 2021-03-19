@@ -4,6 +4,7 @@ import { GenericUIHandler } from "./internal/defaultui/genericuihandler";
 import { LocalIdentityUIHandler } from "./localidentity/defaultui/localidentityuihandler";
 import type { IConnector } from "./interfaces/connectors/iconnector";
 import { globalStorageService } from "./services/global.storage.service";
+import { DIDHelper } from "./did/internal/didhelper";
 
 export class Connectivity {
     private connectors: IConnector[] = [];
@@ -57,21 +58,35 @@ export class Connectivity {
      * Sets the active connector for the whole application. The active connector is used
      * by all Elastos operation that require access to a connector API.
      */
-    public setActiveConnector(connectorName: string) {
-        if (connectorName == null) {
+    public async setActiveConnector(connectorName: string) {
+        if (connectorName == null && this.activeConnector) {
+            await this.cleanupConnectorContext(this.activeConnector);
             console.log("Forgetting the currently active connector");
             this.activeConnector = null;
         }
-        else {
+        else if (connectorName != null) {
             let newActiveConnector = this.connectors.find((c)=>c.name === connectorName);
             if (!newActiveConnector)
                 throw new Error("Failed to set active connector. Connector "+connectorName+" not found!");
+
+            if (this.activeConnector && this.activeConnector.name !== connectorName)
+                await this.cleanupConnectorContext(this.activeConnector);
 
             this.activeConnector = newActiveConnector;
         }
 
         // Save connector name to disk for when the app restarts.
         globalStorageService.set("activeconnectorname", connectorName);
+    }
+
+    /**
+     * Cleanup current context for a given connector so that its data will not overlap
+     * with another connector's data when setting a different active connector.
+     * This is true for example for hive's App ID credential, that is different for each connector.
+     */
+    private async cleanupConnectorContext(connector: IConnector): Promise<void> {
+        console.log("[Elastos Connectivity SDK] Cleaning up connector context for: "+connector.name);
+        await new DIDHelper().cleanupConnectorContext(connector);
     }
 
     public getActiveConnector(): IConnector | null {
