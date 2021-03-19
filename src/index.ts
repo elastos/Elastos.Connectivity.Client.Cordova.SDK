@@ -6,6 +6,7 @@ import { Connectivity } from "./connectivity";
 import * as Interfaces from "./interfaces";
 import { localIdentityManager as localIdentity } from "./localidentity/manager";
 import { globalLocalizationService as localization } from "./services/global.localization.service";
+import { globalThemeService as theme } from "./services/global.theme.service";
 
 import { LocalIdentityConnector } from "./localidentity/connector";
 
@@ -28,5 +29,6 @@ export {
     // Singleton instances
     connectivity,
     localIdentity,
-    localization
+    localization,
+    theme
 }
