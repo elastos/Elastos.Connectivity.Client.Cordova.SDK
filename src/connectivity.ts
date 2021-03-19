@@ -10,6 +10,7 @@ export class Connectivity {
     private activeConnector: IConnector | null = null;
     public genericUIHandler: IGenericUIHandler = new GenericUIHandler();
     public localIdentityUIHandler: ILocalIdentityUIHandler = new LocalIdentityUIHandler();
+    private applicationDID: string = null;
 
     constructor() {}
 
@@ -79,6 +80,22 @@ export class Connectivity {
 
     public getAvailableConnectors(): IConnector[] {
         return this.connectors;
+    }
+
+    /**
+     * Sets the application DID string. Each application using the connectivity SDK has to have its own
+     * DID, published on chain, and configured with the developer tool application for secure identication
+     * purpose.
+     */
+    public setApplicationDID(appDID: string) {
+        this.applicationDID = appDID;
+    }
+
+    public getApplicationDID(): string {
+        if (!this.applicationDID)
+            throw new Error("No application DID defined yet. Please call setApplicationDID() first.");
+
+        return this.applicationDID;
     }
 
     /**

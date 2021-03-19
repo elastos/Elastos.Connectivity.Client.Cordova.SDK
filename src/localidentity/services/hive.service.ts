@@ -14,15 +14,18 @@ class HiveService {
     constructor() {}
 
     public async getHiveClient(forceNewClient = false): Promise<HivePlugin.Client> {
-        if (this.hiveClient && !forceNewClient)
-            return this.hiveClient;
+        return new Promise(async (resolve, reject) =>{
+            if (this.hiveClient && !forceNewClient)
+                resolve(this.hiveClient);
 
-        let hiveAuthHelper = new Hive.AuthHelper();
-        this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
-            // Auth error
-            console.error("Authentication error", e); // TODO: inform user.
+            let hiveAuthHelper = new Hive.AuthHelper();
+            this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
+                // Auth error
+                console.error("Hive authentication error");
+                reject(e);
+            });
+            resolve(this.hiveClient);
         });
-        return this.hiveClient;
     }
 
     public async getUserVault(forceNewClient = false): Promise<HivePlugin.Vault> {

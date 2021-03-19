@@ -64,9 +64,9 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         return identityService.generatePresentationForClaims(claims);
     }
 
-    showRequestIssueAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential> {
+    showRequestIssueAppIDCredential(appInstanceDID: string, appDID: string): Promise<DIDPlugin.VerifiableCredential> {
         // NOTE: No UI shown, direct response
-        return identityService.generateApplicationIDCredential(appInstanceDID, "did:elastos:TODO");
+        return identityService.generateApplicationIDCredential(appInstanceDID, appDID);
     }
 
     showManageIdentity(): Promise<void> {

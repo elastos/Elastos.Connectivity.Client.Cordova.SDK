@@ -43,7 +43,7 @@ export class DIDAccess {
                 // No such credential, so we have to create one. Send an intent to get that from the did app
                 this.helper.logger.log("Starting to generate a new App ID credential.");
 
-                let credential = await connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString());
+                let credential = await connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString(), connectivity.getApplicationDID());
 
                 // TODO IMPORTANT: Check if the credential was issued by the user himself for security purpose, to make sure
                 // another app is not trying to issue and add a fake app-id-credential credential to user's profile

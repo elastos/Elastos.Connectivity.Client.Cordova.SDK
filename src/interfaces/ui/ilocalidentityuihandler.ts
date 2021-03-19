@@ -5,5 +5,5 @@ export interface ILocalIdentityUIHandler {
 
     // Identity usage requests
     showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation>;
-    showRequestIssueAppIDCredential(appInstanceDID: string): Promise<DIDPlugin.VerifiableCredential>;
+    showRequestIssueAppIDCredential(appInstanceDID: string, appDID: string): Promise<DIDPlugin.VerifiableCredential>;
 }
