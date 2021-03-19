@@ -22,6 +22,11 @@ export class Connectivity {
         if (connector) {
             console.log("[Elastos Connectivity SDK] Registering connector with name", connector.name);
 
+            // Make sure this connector name doesn't exist yet.
+            let connectorIndex = this.connectors.findIndex((c)=>c.name === connector.name);
+            if (connectorIndex >= 0)
+                throw new Error("Connector with name "+connector.name+" already exists");
+
             this.connectors.push(connector);
 
             // Retrieve the existing active connector, if any. If the connector we just registered
@@ -32,6 +37,19 @@ export class Connectivity {
                 this.activeConnector = connector;
             }
         }
+    }
+
+    public async unregisterConnector(connectorName: string) {
+        // Unregistering the active connector? Forget it as active.
+        if (this.activeConnector && this.activeConnector.name == connectorName)
+            this.setActiveConnector(null);
+
+        let connectorIndex = this.connectors.findIndex((c)=>c.name === connectorName);
+        if (connectorIndex < 0)
+            throw new Error("Connector with name "+connectorName+" doesn't exist");
+
+        // Remove connector from our list.
+        this.connectors.splice(connectorIndex, 1);
     }
 
     /**

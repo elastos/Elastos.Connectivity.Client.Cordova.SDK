@@ -9,11 +9,18 @@ export class ConnectivityHelper {
         if (connectivity.getActiveConnector() != null)
             onActiveConnector();
         else {
-            let selectedConnectorName = await connectivity.genericUIHandler.showConnectorChooser();
-            if (selectedConnectorName)
+            // If no active connector but only one connector available, we auto-activate it.
+            if (connectivity.getAvailableConnectors().length == 1) {
+                connectivity.setActiveConnector(connectivity.getAvailableConnectors()[0].name);
                 onActiveConnector();
-            else
-                onCancelled();
+            }
+            else {
+                let selectedConnectorName = await connectivity.genericUIHandler.showConnectorChooser();
+                if (selectedConnectorName)
+                    onActiveConnector();
+                else
+                    onCancelled();
+            }
         }
     }
 }
