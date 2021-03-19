@@ -3,6 +3,7 @@ import type { ILocalIdentityUIHandler } from "./interfaces/ui/ilocalidentityuiha
 import { GenericUIHandler } from "./internal/defaultui/genericuihandler";
 import { LocalIdentityUIHandler } from "./localidentity/defaultui/localidentityuihandler";
 import type { IConnector } from "./interfaces/connectors/iconnector";
+import { globalStorageService } from "./services/global.storage.service";
 
 export class Connectivity {
     private connectors: IConnector[] = [];
@@ -10,16 +11,27 @@ export class Connectivity {
     public genericUIHandler: IGenericUIHandler = new GenericUIHandler();
     public localIdentityUIHandler: ILocalIdentityUIHandler = new LocalIdentityUIHandler();
 
+    constructor() {}
+
     /**
      * Registers a new connector as part of the available service providers.
      * This connector can then be selected by the app or by the end users to manage
      * their Elastos operations (get credentials, authenticate on hive, call smart contracts, etc).
      */
-    public registerConnector(connector: IConnector) {
-        if (connector)
+    public async registerConnector(connector: IConnector) {
+        if (connector) {
             console.log("[Elastos Connectivity SDK] Registering connector with name", connector.name);
 
-        this.connectors.push(connector);
+            this.connectors.push(connector);
+
+            // Retrieve the existing active connector, if any. If the connector we just registered
+            // if the active one, we re-activate it.
+            let activeConnectorName = await globalStorageService.get("activeconnectorname", null);
+            if (activeConnectorName == connector.name) {
+                console.log("[Elastos Connectivity SDK] Reactivating previously saved connector:"+activeConnectorName);
+                this.activeConnector = connector;
+            }
+        }
     }
 
     /**
@@ -38,6 +50,9 @@ export class Connectivity {
 
             this.activeConnector = newActiveConnector;
         }
+
+        // Save connector name to disk for when the app restarts.
+        globalStorageService.set("activeconnectorname", connectorName);
     }
 
     public getActiveConnector(): IConnector | null {

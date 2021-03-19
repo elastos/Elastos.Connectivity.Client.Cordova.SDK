@@ -5,7 +5,7 @@ import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
  */
 export class DefaultKeyValueStorage implements IKeyValueStorage {
     async set(key: string, value: string): Promise<void> {
-        window.localStorage.setItem(key, value.toString());
+        window.localStorage.setItem(key, value);
     }
 
     async get(key: string, defaultValue: string): Promise<string> {
@@ -15,5 +15,4 @@ export class DefaultKeyValueStorage implements IKeyValueStorage {
         else
             return defaultValue;
     }
-
 }
