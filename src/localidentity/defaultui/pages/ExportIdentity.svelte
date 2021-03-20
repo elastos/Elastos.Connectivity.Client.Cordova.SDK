@@ -87,6 +87,57 @@
 </script>
 
 <style lang="scss">
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 300;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-Light.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 400;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-Regular.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 500;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-Medium.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 600;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-SemiBold.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 700;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-Bold.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 800;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-ExtraBold.ttf');
+    }
+    @font-face {
+        font-family: 'Montserrat';
+        font-weight: 900;
+        font-style: normal;
+        src: url('assets/localidentity/fonts/montserrat/Montserrat-Black.ttf');
+    }
+
+    :root {
+        font-family: 'Montserrat';
+
+        :focus {
+            outline: none;
+        }
+    }
+  
     button {
         height: 50px;
         width: 100%;
@@ -100,7 +151,7 @@
     .container {
         height: 100%;
         width: 100%;
-        padding: 10px 20px;
+        padding: 20px;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -109,82 +160,81 @@
         row {
             padding: 0 0 20px;
             width: 100%;
-
-            col {
-                h1 {
-                    font-size: 17px;
-                    font-weight: 600;
-                    margin: 0 0 0 5px;
-                    text-align: left;
-
-                }
-
-                h3 {
-                    margin: 5px 0 10px;;
-                    font-size: 14px;
-                    font-weight: 500;
-                    text-align: center;
-                    word-wrap: wrap;
-
-                    border-radius: 17px;
-                    padding: 20px;
-                    box-shadow: 0 3px 15px 0 #ededf0;
-                    background-color: #ffffff;
-                }
-                #mnemonic {
-                    line-height: 1.75;
-                }
-            }
         }
-    }
 
-    .dark-container {
-        .row {
-            col {
-                h3 {
-                    box-shadow: 0 3px 15px 0 #151626;
-                    background-color: #2b2c49;
-                }
-            }
+        h4 {
+            font-size: 17px;
+            font-weight: 600;
+            margin: 0 0 0 5px;
+            text-align: left;
+        }
+
+        h6 {
+            margin: 5px 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            word-wrap: wrap;
+            border-radius: 17px;
+            padding: 20px;
+            box-shadow: 0 3px 15px 0 #ededf0;
+            background-color: #ffffff;
+        }
+
+        #mnemonic {
+            line-height: 1.75;
         }
     }
 
     footer {
+        border: none;
+        padding: 0 20px 20px;
+
         p {
-            padding: 0px 20px;
-            font-size: 14px;
-            font-weight: 500;
+            margin: 0;
+            padding: 0 10px 10px;
+            font-size: 12px;
+            font-weight: 600;
             text-align: center;
         };
     }
+
+    .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
+
+        h6 {
+            box-shadow: 0 3px 15px 0 #151626;
+            background-color: #2b2c49;
+            color: #ffffff;
+        }
+    }
 </style>
 
-<content class="text-center">
-    <grid class="container" class:dark-container={globalThemeService.darkMode}>
-      <row>
+<div class="container" class:dark-mode={globalThemeService.darkMode}>
+    <row>
         <div class="col" size="12">
-          <h1>{$_('exportidentity.did')}</h1>
-          <h3>{didString}</h3>
-          <CopyToClipboard text={didString} on:copy={handleDidStringSuccessfulCopy} on:fail={handleDidStringFailedCopy} let:onCopy>
-            <button on:click={onCopy}>{$_('exportidentity.copy-did')}</button>
-          </CopyToClipboard>
+            <h4>{$_('exportidentity.did')}</h4>
+            <h6>{didString}</h6>
+            <CopyToClipboard text={didString} on:copy={handleDidStringSuccessfulCopy} on:fail={handleDidStringFailedCopy} let:onCopy>
+                <button on:click={onCopy}>{$_('exportidentity.copy-did')}</button>
+            </CopyToClipboard>
         </div>
-      </row>
-      <row>
+    </row>
+    <row>
         <div class="col" size="12">
-          <h1>{$_('exportidentity.paperkey')}</h1>
-          {#if !hidePaperkey}
-          <h3 id="mnemonic">{paperkeyWords}</h3>
-          {:else}
-          <h3 id="mnemonic">************************************</h3>
-          {/if}
-          <button on:click={()=>component.showPaperkey()}>{$_(component.getButtonLabel())}</button>
+            <h4>{$_('exportidentity.paperkey')}</h4>
+            {#if !hidePaperkey}
+                <h6 id="mnemonic">{paperkeyWords}</h6>
+            {:else}
+                <h6 id="mnemonic">************************************</h6>
+            {/if}
+            <button on:click={()=>component.showPaperkey()}>{$_(component.getButtonLabel())}</button>
         </div>
-      </row>
-    </grid>
-</content>
+    </row>
+</div>
 
-<footer class="no-border">
+<footer class:dark-mode={globalThemeService.darkMode}>
     {#if !paperkeyCopiedToClipboard}
     <p>{$_('exportidentity.paperkey-not-copied-msg')}</p>
     <CopyToClipboard text={paperkeyWords} on:copy={handlePaperkeySuccessfulCopy} on:fail={handlePaperkeyFailedCopy} let:onCopy>
@@ -192,5 +242,5 @@
     </CopyToClipboard>
     {:else}
     <p>{$_('exportidentity.paperkey-copied-msg')}</p>
-    {/if}
+    {/if} 
 </footer>

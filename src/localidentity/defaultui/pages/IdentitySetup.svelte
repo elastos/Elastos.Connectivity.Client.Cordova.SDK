@@ -306,47 +306,13 @@
 
 <style type="text/scss">
     :global(.swiper-slide) {
-        height: 100%;
-        padding: 40px;
+        height: 100% !important;
+        padding: 40px 20px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
 
-        img {
-        width: 100px;
-        height: 100px;
-        animation: imgAnimate;
-        animation-duration: 1000ms;
-        animation-fill-mode: forwards;
-
-
-        @keyframes imgAnimate {
-            0% { width: 0px; height: 0px; }
-            100% { width: 100px; height: 100px; }
-        }
-        }
-
-        h1 {
-        font-size: 17px;
-        font-weight: 600;
-        margin-bottom: 5px;
-        }
-
-        h2 {
-        font-size: 25px;
-        font-weight: 700;
-        letter-spacing: -0.43px;
-        margin: 0;
-        }
-
-        p {
-        font-size: 14px;
-        font-weight: 500;
-        }
-    }
-
-    content {
         img {
             width: 100px;
             height: 100px;
@@ -354,11 +320,14 @@
             animation-duration: 1000ms;
             animation-fill-mode: forwards;
 
-
             @keyframes imgAnimate {
-            0% { width: 0px; height: 0px; }
-            100% { width: 100px; height: 100px; }
+                0% { width: 0px; height: 0px; }
+                100% { width: 100px; height: 100px; }
             }
+        }
+
+        #first-slide-img {
+            margin-top: 125px;
         }
 
         h1 {
@@ -377,29 +346,32 @@
         p {
             font-size: 14px;
             font-weight: 500;
+            text-align: center;
+            padding: 0 10px;
+        }
+    }
+
+    .progress-container {
+        height: 100%;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        ion-icon, ion-spinner {
+            width: 25px;
+            height: 25px;
+            color: #732dcf;
         }
 
-        grid {
-            height: 100%;
+        .steps-row {
+            border-radius: 17px;
             padding: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            ion-icon, ion-spinner {
-                width: 25px;
-                height: 25px;
-                color: #732dcf;
-            }
-
-            .steps-row {
-                border-radius: 17px;
-                padding: 10px;
-                margin: 7.5px 0;
-                box-shadow: 0 3px 15px 0 #ededf0;
-                width: 100%;
-                background-color: #ffffff;
+            margin: 7.5px 0;
+            box-shadow: 0 3px 15px 0 #ededf0;
+            width: 100%;
+            background-color: #ffffff;
 
             ion-col {
                 display: flex;
@@ -407,69 +379,73 @@
                 align-items: center;
 
                 ion-label {
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
-                justify-content: center;
-                width: 85%;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    justify-content: center;
+                    width: 85%;
 
-                h1, h2 {
-                    margin: 0;
-                }
+                    h1, h2 {
+                        margin: 0;
+                    }
 
-                h1 {
-                    font-size: 17px;
-                    font-weight: 600;
-                    text-align: left;
-                }
+                    h1 {
+                        font-size: 17px;
+                        font-weight: 600;
+                        text-align: left;
+                    }
 
-                h2 {
-                    font-size: 13px;
-                    font-weight: 500;
-                    padding: 5px 0 0;
-                    text-align: left;
-                    word-wrap: break-word;
-                }
+                    h2 {
+                        font-size: 13px;
+                        font-weight: 500;
+                        padding: 5px 0 0;
+                        text-align: left;
+                        word-wrap: break-word;
+                    }
                 }
 
                 .done {
-                color: #10dc60;
+                    color: #10dc60;
                 }
 
                 .pending {
-                color: #ffce00;
+                    color: #ffce00;
                 }
             }
-            }
+        }
 
-            .done-msg {
-                margin-top: 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
+        .done-msg {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
 
-                p {
-                    padding: 0px 20px;
-                    font-size: 12px;
-                    font-weight: 600;
-                };
-            }
+            p {
+                padding: 0px 20px;
+                font-size: 12px;
+                font-weight: 600;
+                text-align: center;
+            };
+        }
 
-            .progress-msg {
-                p {
-                    margin: 0;
-                    padding: 17.5px;
-                    font-size: 12px;
-                    font-weight: 600;
-                };
-            }
+        .progress-msg {
+            p {
+                margin: 0;
+                padding: 12.5px 20px 20px;
+                font-size: 12px;
+                font-weight: 600;
+                text-align: center;
+            };
         }
     }
 
     footer {
+        padding: 0 20px 20px;
+
         p {
-            padding: 0px 20px;
+            margin: 0;
+            padding: 0px 20px 10px;
             font-size: 14px;
             font-weight: 500;
             text-align: center;
@@ -490,54 +466,67 @@
         }
     }
 
-    .dark-content {
-        
+    .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
+
+        .steps-row {
+            box-shadow: 0 3px 15px 0 #151626;
+            background-color: #2b2c49;
+            color: #ffffff;
+        }
     }
 </style>
 
-<content class="text-center" class:dark-content={globalThemeService.darkMode}>
-    {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
-    <Swiper 
-        bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
-        pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}
-    >
-            <SwiperSlide>
-                <img src="assets/localidentity/icons/did.svg" alt="" />
-                <h1>{$_("welcome")}</h1>
-                <h2>{$_("my-first-did")}</h2>
-            </SwiperSlide>
-            <SwiperSlide>
-                <LottiePlayer
-                    src="assets/localidentity/animations/fingerprint.json"
-                    background="transparent"
-                    speed="1"
-                    style="width: 150px; height: 150px;"
-                    autoplay="{true}"
-                    loop="{true}"
-                />
-                <p>{$_("identitysetup.slide2-msg")}</p>
-                <p>{$_("identitysetup.slide2-msg2")}</p>
-            </SwiperSlide>
-            <SwiperSlide>
-                <LottiePlayer
-                    src="assets/localidentity/animations/device.json"
-                    background="transparent"
-                    speed="1"
-                    style="width: 300px; height: 300px;"
-                    autoplay="{true}"
-                    loop="{true}"
-                />
-                <p>
-                    {$_("identitysetup.slide3-msg")}
-                </p>
-            </SwiperSlide>
+<content>
+    {#if componentWatcher("wasTemporaryIdentityCreationStarted")}
+        <div class="swiper-container" class:dark-mode={globalThemeService.darkMode}>
+            <Swiper 
+                bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
+                pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}
+            >
+                <SwiperSlide>
+                    {#if !globalThemeService.darkMode}
+                        <img id="first-slide-img" src="assets/localidentity/icons/did.svg" alt="" />
+                    {:else}
+                        <img id="first-slide-img" src="assets/localidentity/icons/darkmode/did.svg" alt="">
+                     {/if}
+                    <h1>{$_("welcome")}</h1>
+                    <h2>{$_("my-first-did")}</h2>
+                </SwiperSlide>
+                <SwiperSlide>
+                    <LottiePlayer
+                        src="assets/localidentity/animations/fingerprint.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 150px; height: 150px;"
+                        autoplay="{true}"
+                        loop="{true}"
+                    />
+                    <p>{$_("identitysetup.slide2-msg")}</p>
+                    <p>{$_("identitysetup.slide2-msg2")}</p>
+                </SwiperSlide>
+                <SwiperSlide>
+                    <LottiePlayer
+                        src="assets/localidentity/animations/device.json"
+                        background="transparent"
+                        speed="1"
+                        style="width: 300px; height: 300px;"
+                        autoplay="{true}"
+                        loop="{true}"
+                    />
+                    <p>
+                        {$_("identitysetup.slide3-msg")}
+                    </p>
+                </SwiperSlide>
 
-            <div class="swiper-pagination" slot="pagination"></div>
-            <div class="swiper-button-next" slot="button-next"></div>
-            <div class="swiper-button-prev" slot="button-prev"></div>
-        </Swiper>
+                <div class="swiper-pagination" slot="pagination"></div>
+                <div class="swiper-button-next" slot="button-next"></div>
+                <div class="swiper-button-prev" slot="button-prev"></div>
+            </Swiper>
+        </div>
     {:else}
-        <grid>
+        <div class="progress-container" class:dark-mode={globalThemeService.darkMode}>
             <ion-row class="steps-row">
                 <ion-col size="12">
                     <ion-label>
@@ -610,11 +599,11 @@
                     <p>{$_("identitysetup.done-msg")}</p>
                 </div>
             {/if}
-        </grid>
+        </div>
     {/if}
 </content>
 
-<footer class="no-border">
+<footer class:dark-mode={globalThemeService.darkMode}>
     {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
         <div>
             {#if !showSpinner && activeSlideIndex < 2}

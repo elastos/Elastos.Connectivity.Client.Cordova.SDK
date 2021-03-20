@@ -2,6 +2,7 @@
     import { _ } from 'svelte-i18n';
     import { navService } from '../nav.service';
     import type { EditProfileNavParams, ExportIdentityNavParams } from '../navparams';
+    import { globalThemeService } from '../../../services/global.theme.service';
     import { ViewType } from '../viewtype';
 
     class ManageIdentityComponent {
@@ -33,63 +34,74 @@
 </script>
 
 <style lang="scss">
-.container {
-    height: 100%;
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    .container {
+        height: 100%;
+        padding: 40px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
 
-    img {
-        width: 100px;
-        height: 100px;
-        animation: imgAnimate;
-        animation-duration: 1000ms;
-        animation-fill-mode: forwards;
-        padding-bottom: 20px;
+        img {
+            width: 100px;
+            height: 100px;
+            animation: imgAnimate;
+            animation-duration: 1000ms;
+            animation-fill-mode: forwards;
+            padding-bottom: 20px;
 
-        @keyframes imgAnimate {
-            0% { width: 0px; height: 0px; }
-            100% { width: 100px; height: 100px; }
+            @keyframes imgAnimate {
+                0% { width: 0px; height: 0px; }
+                100% { width: 100px; height: 100px; }
+            }
+        }
+
+        p {
+            padding: 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
         }
     }
 
-    p {
-        font-size: 14px;
-        font-weight: 500;
-    }
-}
+    footer {
+        padding: 20px;
 
-footer {
-    button {
-        height: 50px;
-        width: 100%;
-        background: linear-gradient(to bottom, #732dcf, #640fd4);
-        color: white;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 500;
+        button {
+            height: 50px;
+            width: 100%;
+            background: linear-gradient(to bottom, #732dcf, #640fd4);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .first-btn {
+            margin-bottom: 5px;
+        }
     }
 
-    .first-btn {
-        margin-bottom: 5px;
+    .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
     }
-}
-
+ 
 </style>
 
-<content class="ion-text-center">
-    <grid class="container">
-        <img src="assets/localidentity/icons/did.svg" alt="">
-        <p>
-        {$_('manageidentity.intro')} <b>{$_('temp-did')}</b>, {$_('manageidentity.intro2')}
-        </p>
-        <p>{$_('manageidentity.intro3')}</p>
-    </grid>
-</content>
+<grid class="container" class:dark-mode={globalThemeService.darkMode}>
+    {#if !globalThemeService.darkMode}
+            <img src="assets/localidentity/icons/did.svg" alt="">
+    {:else}
+        <img src="assets/localidentity/icons/darkmode/did.svg" alt="">
+    {/if}
+    <p>
+    {$_('manageidentity.intro')} <b>{$_('temp-did')}</b>, {$_('manageidentity.intro2')}
+    </p>
+    <p>{$_('manageidentity.intro3')}</p>
+</grid>
 
-<footer class="ion-no-border">
+<footer border="none" class:dark-mode={globalThemeService.darkMode}>
     <button class="first-btn" on:click={()=>component.editProfile()}>{$_('manageidentity.edit-profile')}</button>
     <button on:click={()=>component.exportIdentity()}>{$_('manageidentity.export-did')}</button>
 </footer>

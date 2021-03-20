@@ -49,6 +49,7 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
             console.log("Local identity: showCreateIdentity()");
             await this.showRootComponentInModal();
             console.log("Setting view type to IdentitySetup");
+            // navService.navigateTo(ViewType.ManageIdentity);
             navService.navigateTo(ViewType.IdentitySetup, {
                 onIdentityCreationCompleted:() => {
                     resolve();
@@ -72,8 +73,8 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     showManageIdentity(): Promise<void> {
         return new Promise(async (resolve)=>{
             await this.showRootComponentInModal();
-           // navService.navigateTo(ViewType.ManageIdentity);
-            navService.navigateTo(ViewType.IdentitySetup);
+            navService.navigateTo(ViewType.ManageIdentity);
+            // navService.navigateTo(ViewType.IdentitySetup);
             // NOTE: if user cancels, we never fulfill this promise for now.
         });
     }

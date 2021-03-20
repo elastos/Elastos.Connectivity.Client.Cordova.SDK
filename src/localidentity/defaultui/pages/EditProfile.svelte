@@ -61,6 +61,8 @@
 <style lang="scss">
     .container {
         margin: 0;
+        padding: 20px;
+        height: 100%;
 
         input {
             background: #f0f1ff;
@@ -75,7 +77,7 @@
 
         p {
             margin: 0;
-            padding: 10px;
+            padding: 0px;
             font-size: 12px;
             font-weight: 600;
             text-align: center;
@@ -83,6 +85,9 @@
     }
 
     footer {
+        border: none;
+        padding: 20px;
+
         button {
             height: 50px;
             width: 100%;
@@ -94,24 +99,28 @@
         }
     }
 
-    .dark-container {
+    .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
+
         input {
             background: #464660;
             color: white;
         }
     }
+
 </style>
 
-<grid class="container" class:dark-container={globalThemeService.darkMode}>
+<div class="container" class:dark-mode={globalThemeService.darkMode}>
     <input placeholder="{$_('edit-profile.enter-name')}" bind:value={name}/>
     <input placeholder="{$_('edit-profile.enter-email')}" type="email" bind:value={email}/>
 
     {#if navParams && navParams.useExistingProfileInfo}
-    <p class="text-center">{$_('edit-profile.message')}</p>
+        <p>{$_('edit-profile.message')}</p>
     {/if}
-</grid>
+</div>
 
-<footer class="no-border">
+<footer class:dark-mode={globalThemeService.darkMode}>
     <button on:click={()=>component.goNext()}>{$_('continue')}</button>
 </footer>
 
