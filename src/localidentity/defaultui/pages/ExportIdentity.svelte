@@ -1,15 +1,32 @@
 <script lang="ts">
-import { onMount } from 'svelte';
-
+    import { onMount } from 'svelte';
+    import CopyToClipboard from "svelte-copy-to-clipboard";
     import { _ } from 'svelte-i18n';
     import { connectivity } from '../../..';
     import { globalThemeService } from '../../../services/global.theme.service';
-import { identityService } from '../../services/identity.service';
+    import { identityService } from '../../services/identity.service';
 
-    let mnemonicCopiedToClipboard = false;
+    let paperkeyCopiedToClipboard = false;
     let didString: string = null;
-    let mnemonicWords: string = null;
-    let hideMnemonic = true;
+    let paperkeyWords: string = null;
+    let hidePaperkey = true;
+
+    const handleDidStringSuccessfulCopy = () => {
+        console.log('Did string copy successful');
+    }
+
+    const handleDidStringFailedCopy = () => {
+        console.log('Did string copy failed');
+    }
+
+    const handlePaperkeySuccessfulCopy = () => {
+        this.paperkeyCopiedToClipboard = true;
+        console.log('Paperkey copy successful');
+    }
+
+    const handlePaperkeyFailedCopy = () => {
+        console.log('Paperkey copy failed');
+    }
 
     class ExportIdentityComponent {
         //private titleBarListener: (icon: TitleBarPlugin.TitleBarIcon) => void = null;
@@ -20,27 +37,16 @@ import { identityService } from '../../services/identity.service';
             this.titleBarListener = null;
         }*/ 
 
-        public showMnemonic() {
-            hideMnemonic = !hideMnemonic;
+        public showPaperkey() {
+            hidePaperkey = !hidePaperkey;
         }
 
         public getButtonLabel() {
-            if(hideMnemonic) {
-                return 'exportidentity.show-mnemonic';
+            if(hidePaperkey) {
+                return 'exportidentity.show-paperkey';
             } else {
-                return 'exportidentity.hide-mnemonic';
+                return 'exportidentity.hide-paperkey';
             }
-        }
-
-        public async copyMnemonicToClipboard() {
-            await this.clipboard.copy(this.mnemonicWords);
-            this.toast('copied');
-            this.mnemonicCopiedToClipboard = true;
-        }
-
-        public async copyDIDStringToClipboard() {
-            /* TODO await this.clipboard.copy(this.didString);
-            this.toast('copied');*/
         }
 
         async toast(msg: string) {
@@ -58,25 +64,25 @@ import { identityService } from '../../services/identity.service';
     let component = new ExportIdentityComponent();
 
     onMount(async ()=>{
-            /* TODO titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
-            titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
-            titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
-            key: "back",
-            iconPath: TitleBarPlugin.BuiltInIcon.BACK
-            });
+        /* TODO titleBarManager.setTitle(this.translate.instant('exportidentity.titlebar-title'));
+        titleBarManager.setNavigationMode(TitleBarPlugin.TitleBarNavigationMode.CLOSE);
+        titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, {
+        key: "back",
+        iconPath: TitleBarPlugin.BuiltInIcon.BACK
+        });
 
-            this.titleBarListener = (icon: TitleBarPlugin.TitleBarIcon) => {
-            if (icon.key == "back")
-                this.navCtrl.back();
-            };
-            titleBarManager.addOnItemClickedListener(this.titleBarListener);*/
+        this.titleBarListener = (icon: TitleBarPlugin.TitleBarIcon) => {
+        if (icon.key == "back")
+            this.navCtrl.back();
+        };
+        titleBarManager.addOnItemClickedListener(this.titleBarListener);*/
 
-            // Get the DID string info
-            let did = await identityService.getLocalDID();
-            didString = did.getDIDString();
+        // Get the DID string info
+        let did = await identityService.getLocalDID();
+        didString = did.getDIDString();
 
-            // Get the DID mnemonic info
-            mnemonicWords = await identityService.getDIDMnemonic();
+        // Get the DID mnemonic info
+        paperkeyWords = await identityService.getDIDMnemonic();
     });
 </script>
 
@@ -159,29 +165,32 @@ import { identityService } from '../../services/identity.service';
         <div class="col" size="12">
           <h1>{$_('exportidentity.did')}</h1>
           <h3>{didString}</h3>
-          <button on:click={()=>component.copyDIDStringToClipboard()}>{$_('exportidentity.copy-did')}</button>
+          <CopyToClipboard text={didString} on:copy={handleDidStringSuccessfulCopy} on:fail={handleDidStringFailedCopy} let:onCopy>
+            <button on:click={onCopy}>{$_('exportidentity.copy-did')}</button>
+          </CopyToClipboard>
         </div>
       </row>
       <row>
         <div class="col" size="12">
-          <h1>{$_('exportidentity.mnemonic')}</h1>
-          {#if !hideMnemonic}
-          <h3 id="mnemonic">{mnemonicWords}</h3>
+          <h1>{$_('exportidentity.paperkey')}</h1>
+          {#if !hidePaperkey}
+          <h3 id="mnemonic">{paperkeyWords}</h3>
           {:else}
           <h3 id="mnemonic">************************************</h3>
           {/if}
-
-          <button on:click={()=>component.showMnemonic()}>{$_(component.getButtonLabel())}</button>
+          <button on:click={()=>component.showPaperkey()}>{$_(component.getButtonLabel())}</button>
         </div>
       </row>
     </grid>
 </content>
 
 <footer class="no-border">
-    {#if !mnemonicCopiedToClipboard}
-    <p>{$_('exportidentity.mnemonic-not-copied-msg')}</p>
-    <button on:click={()=>component.copyMnemonicToClipboard()}>{$_('exportidentity.copy-mnemonic')}</button>
+    {#if !paperkeyCopiedToClipboard}
+    <p>{$_('exportidentity.paperkey-not-copied-msg')}</p>
+    <CopyToClipboard text={paperkeyWords} on:copy={handlePaperkeySuccessfulCopy} on:fail={handlePaperkeyFailedCopy} let:onCopy>
+        <button on:click={onCopy}>{$_('exportidentity.copy-paperkey')}</button>
+    </CopyToClipboard>
     {:else}
-    <p>{$_('exportidentity.mnemonic-copied-msg')}</p>
+    <p>{$_('exportidentity.paperkey-copied-msg')}</p>
     {/if}
 </footer>

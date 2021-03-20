@@ -60,12 +60,12 @@ export const en = {
     'titlebar-title': 'Export Identity',
     'did': 'Identity',
     'copy-did': 'Copy Identity',
-    'copy-mnemonic': 'Copy Mnemonic',
-    'mnemonic': 'Mnemonic',
-    'show-mnemonic': 'Show Mnemonic',
-    'hide-mnemonic': 'Hide Mnemonic',
-    'mnemonic-not-copied-msg': 'Safely store the following mnemonic words in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
-    'mnemonic-copied-msg': 'Your mnemonic words have been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
+    'copy-paperkey': 'Copy Paper Key',
+    'paperkey': 'Paper Key',
+    'show-paperkey': 'Show Paper Key',
+    'hide-paperkey': 'Hide Paper Key',
+    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
+    'paperkey-copied-msg': 'Your paper key has been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
   },
 
   'manageidentity': {

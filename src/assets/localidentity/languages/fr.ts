@@ -60,12 +60,12 @@ export const fr = {
     'titlebar-title': 'Exporter l\'identité',
     'did': 'Identité',
     'copy-did': 'Copier l\'identité',
-    'copy-mnemonic': 'Copier le Mnémonique',
-    'mnemonic': 'Mnémonique',
-    'show-mnemonic': 'Afficher le Mnémonique',
-    'hide-mnemonic': 'Cacher le Mnémonique',
-    'mnemonic-not-copied-msg': 'Notez précieusement les mots suivant, dans le bon ordre. Ensuite, vous pouvez les copier / coller pour importer votre identité dans votre portefeuille d\'identité habituel (ex: elastOS).',
-    'mnemonic-copied-msg': 'Vos mots mnémoniques ont été copiés dans le presse-papier. Enregistrez-les avec soin. Vous pouvez maintenance importer votre identité dans votre portefeuille d\'identité externe.'
+    'copy-paperkey': 'Copy Paper Key',
+    'paperkey': 'Paper Key',
+    'show-paperkey': 'Show Paper Key',
+    'hide-paperkey': 'Hide Paper Key',
+    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
+    'paperkey-copied-msg': 'Your paper key has been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
   },
 
   'manageidentity': {

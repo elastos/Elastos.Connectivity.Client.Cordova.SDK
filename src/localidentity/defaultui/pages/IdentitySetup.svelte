@@ -16,6 +16,7 @@
     import { hiveService } from '../../services/hive.service';
     import { persistenceService } from '../../services/persistence.service';
     import { globalStorageService } from '../../../services/global.storage.service';
+    import { globalThemeService } from '../../../services/global.theme.service';
     import { navService } from '../nav.service';
     import { ViewType } from '../viewtype';
     import type { EditProfileNavParams, IdentitySetupNavParams } from '../navparams';
@@ -488,12 +489,18 @@
             font-weight: 500;
         }
     }
+
+    .dark-content {
+        
+    }
 </style>
 
-<content class="text-center">
+<content class="text-center" class:dark-content={globalThemeService.darkMode}>
     {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
-    <Swiper bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
-    pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}>
+    <Swiper 
+        bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
+        pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}
+    >
             <SwiperSlide>
                 <img src="assets/localidentity/icons/did.svg" alt="" />
                 <h1>{$_("welcome")}</h1>

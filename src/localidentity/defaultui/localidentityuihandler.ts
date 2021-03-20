@@ -72,7 +72,8 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     showManageIdentity(): Promise<void> {
         return new Promise(async (resolve)=>{
             await this.showRootComponentInModal();
-            navService.navigateTo(ViewType.ManageIdentity);
+           // navService.navigateTo(ViewType.ManageIdentity);
+            navService.navigateTo(ViewType.IdentitySetup);
             // NOTE: if user cancels, we never fulfill this promise for now.
         });
     }

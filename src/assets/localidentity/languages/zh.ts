@@ -60,12 +60,12 @@ export const zh = {
     'titlebar-title': '导入身份',
     'did': '身份',
     'copy-did': '复制身份',
-    'copy-mnemonic': '复制助记词',
-    'mnemonic': '助记词',
-    'show-mnemonic': '显示助记词',
-    'hide-mnemonic': '隐藏助记词',
-    'mnemonic-not-copied-msg': '以正确的顺序安全地存储以下助记词。 之后，您可以将它们复制并粘贴到您喜欢的身份应用程序（例如elastOS）的导入身份流程中。',
-    'mnemonic-copied-msg': '您的助记词已复制到剪贴板，请安全保存。 现在，您可以打开第三方身份应用程序，并使用这些单词导入您的身份。'
+    'copy-paperkey': 'Copy Paper Key',
+    'paperkey': 'Paper Key',
+    'show-paperkey': 'Show Paper Key',
+    'hide-paperkey': 'Hide Paper Key',
+    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
+    'paperkey-copied-msg': 'Your paper key has been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
   },
 
   'manageidentity': {
