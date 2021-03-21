@@ -17,7 +17,6 @@ class GlobalLocalizationService {
 
     private init() {
         dictionary.set(this.currentLanguages);
-
         this.setLanguage('en');
     }
 

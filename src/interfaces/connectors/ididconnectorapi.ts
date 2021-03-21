@@ -8,7 +8,7 @@ export interface IDIDConnectorAPI {
     getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation>;
 
     /**
-     * Request user's identity wallet to generate a special "app ID" credential. This credential is used
+     * Requests user's identity wallet to generate a special "app ID" credential. This credential is used
      * to authorize an application to access some kind of information after prooving who it is.
      * For example, this credential is used by the hive authentication, in order to let apps access only
      * the storage space sandboxed using the application DID, and not other app's storage data.
