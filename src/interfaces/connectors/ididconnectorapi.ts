@@ -1,11 +1,12 @@
+import type { GetCredentialsQuery } from "../../did/model/getcredentialsquery";
 export interface IDIDConnectorAPI {
     /**
-     * Gets credentials from user identity, based on the requested claims. Claims format is available
+     * Gets credentials from user identity, based on the requested GetCredentialsQuery. Claims format is available
      * on the elastos developer portal and can be optional or mandatory.
      * A DID Verifiable Presentation is returned, including the list of related credentials found
      * in user's identity wallet.
      */
-    getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation>;
+    getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation>;
 
     /**
      * Requests user's identity wallet to generate a special "app ID" credential. This credential is used

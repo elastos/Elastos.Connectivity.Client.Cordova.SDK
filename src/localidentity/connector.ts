@@ -1,6 +1,7 @@
 import { connectivity } from "..";
 import type { Connectors } from "../interfaces";
 import { identityService } from "./services/identity.service";
+import type { GetCredentialsQuery } from "../did/model/getcredentialsquery";
 
 export class LocalIdentityConnector implements Connectors.IConnector {
     public name: string = "local-identity";
@@ -9,7 +10,7 @@ export class LocalIdentityConnector implements Connectors.IConnector {
      * DID API
      */
 
-    async getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+    async getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
         if (!await identityService.identityIsFullyReadyToUse()) {
             // No local identity yet: we have to create one first
             console.log("Local identity is not ready to use, showing identity creation screen");
@@ -18,7 +19,7 @@ export class LocalIdentityConnector implements Connectors.IConnector {
             return null; // TODO: for now, after the initial creation, we don't proceed to the initial request. This is to be done
         }
         else {
-            let credential = await connectivity.localIdentityUIHandler.showRequestGetCredentials(claims);
+            let credential = await connectivity.localIdentityUIHandler.showRequestGetCredentials(query);
             return credential;
         }
     }
@@ -40,7 +41,7 @@ export class LocalIdentityConnector implements Connectors.IConnector {
      * Wallet API
      */
 
-    async pay() {
+     async pay() {
         throw new Error("Method not implemented.");
     }
 

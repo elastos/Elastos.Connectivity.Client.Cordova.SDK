@@ -8,6 +8,7 @@ import { ViewType } from "./viewtype";
 import { navService } from "./nav.service";
 import { identityService } from "../services/identity.service";
 import type { IdentitySetupNavParams } from "./navparams";
+import type { GetCredentialsQuery } from "../../did/model/getcredentialsquery";
 
 export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
     private localIdentityModalShown = false;
@@ -60,9 +61,9 @@ export class LocalIdentityUIHandler implements ILocalIdentityUIHandler {
         });
     }
 
-    showRequestGetCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+    showRequestGetCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
         // NOTE: No UI shown, direct response
-        return identityService.generatePresentationForClaims(claims);
+        return identityService.generatePresentationForClaims(query.claims);
     }
 
     showRequestIssueAppIDCredential(appInstanceDID: string, appDID: string): Promise<DIDPlugin.VerifiableCredential> {

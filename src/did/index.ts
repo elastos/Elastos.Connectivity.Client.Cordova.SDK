@@ -1,8 +1,11 @@
 import { DIDAccess } from "./didaccess";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
+import type { UICustomization,  GetCredentialsQuery } from "./model/getcredentialsquery";
 
 export type {
-    FastDIDCreationResult
+    FastDIDCreationResult,
+    UICustomization,
+    GetCredentialsQuery
 }
 
 export {

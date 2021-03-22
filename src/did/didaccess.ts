@@ -6,6 +6,7 @@ import { DefaultLogger } from "../internal/defaultlogger";
 import { globalStorageService } from "../services/global.storage.service";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./internal/didhelper";
+import type { GetCredentialsQuery } from "./model/getcredentialsquery";
 import { Utils } from "./utils";
 const moment = require('moment');
 
@@ -25,10 +26,10 @@ export class DIDAccess {
         this.helper.setLogger(logger);
     }
 
-    public async getCredentials(claims: any): Promise<DIDPlugin.VerifiablePresentation> {
+    public async getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
         return new Promise((resolve)=>{
             ConnectivityHelper.ensureActiveConnector(async ()=>{
-                let presentation = await connectivity.getActiveConnector().getCredentials(claims);
+                let presentation = await connectivity.getActiveConnector().getCredentials(query);
                 resolve(presentation);
             }, ()=>{
                 resolve(null);
