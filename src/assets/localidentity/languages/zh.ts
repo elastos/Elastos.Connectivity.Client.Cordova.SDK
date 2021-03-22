@@ -1,6 +1,7 @@
 export const zh = {
 
   /********** Global **********/
+  'local-identity-name': 'Temporary Identity',
   'welcome': '欢迎来到',
   'my-first-did': '我的第一个身份',
   'temp-did': '临时身份',

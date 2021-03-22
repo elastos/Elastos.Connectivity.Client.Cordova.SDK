@@ -1,6 +1,7 @@
 export const fr = {
 
   /********** Global **********/
+  'local-identity-name': 'Identité temporaire',
   'welcome': 'Bienvenue sur',
   'my-first-did': 'Ma Première Identité',
   'temp-did': 'identité temporaire',

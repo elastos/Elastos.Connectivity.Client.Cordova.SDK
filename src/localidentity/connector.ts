@@ -2,9 +2,14 @@ import { connectivity } from "..";
 import type { Connectors } from "../interfaces";
 import { identityService } from "./services/identity.service";
 import type { GetCredentialsQuery } from "../did/model/getcredentialsquery";
+import { _, getMessageFormatter } from 'svelte-i18n';
 
 export class LocalIdentityConnector implements Connectors.IConnector {
     public name: string = "local-identity";
+
+    async getDisplayName(): Promise<string> {
+        return getMessageFormatter("local-identity-name").format() as string;
+    }
 
     /**
      * DID API

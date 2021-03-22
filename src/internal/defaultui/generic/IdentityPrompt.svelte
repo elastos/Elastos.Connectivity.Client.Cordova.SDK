@@ -73,6 +73,8 @@
 <ion-footer class="ion-no-border">
 <p>{ $_('credaccessprompt.login-msg') }</p>
 {#each connectivity.getAvailableConnectors() as connector }
-    <ion-button on:click={() => connectorSelected(connector)}>{connector.name}</ion-button>
+    {#await connector.getDisplayName() then connectorName }
+    <ion-button on:click={() => connectorSelected(connector)}>{ $_(connectorName) }</ion-button>
+    {/await}
 {/each}
 </ion-footer>

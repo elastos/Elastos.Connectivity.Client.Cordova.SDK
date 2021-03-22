@@ -66,6 +66,7 @@
 
     footer {
         padding: 20px;
+        border: none;
 
         button {
             height: 50px;
@@ -86,7 +87,7 @@
         background: #191a2f;
         color: #ffffff;
     }
- 
+
 </style>
 
 <grid class="container" class:dark-mode={globalThemeService.darkMode}>
@@ -101,7 +102,7 @@
     <p>{$_('manageidentity.intro3')}</p>
 </grid>
 
-<footer border="none" class:dark-mode={globalThemeService.darkMode}>
+<footer class:dark-mode={globalThemeService.darkMode}>
     <button class="first-btn" on:click={()=>component.editProfile()}>{$_('manageidentity.edit-profile')}</button>
     <button on:click={()=>component.exportIdentity()}>{$_('manageidentity.export-did')}</button>
 </footer>

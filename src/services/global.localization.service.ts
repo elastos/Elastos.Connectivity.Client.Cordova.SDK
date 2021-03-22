@@ -4,6 +4,7 @@ import { fr } from '../assets/localidentity/languages/fr';
 import { zh } from '../assets/localidentity/languages/zh';
 
 class GlobalLocalizationService {
+    private activeLanguage;
     private baseLanguages = {
         en: en,
         fr: fr,
@@ -16,6 +17,11 @@ class GlobalLocalizationService {
     }
 
     private init() {
+        locale.subscribe((lang)=>{
+            console.log("LANG CHANGED:", lang);
+            this.activeLanguage = lang;
+        });
+
         dictionary.set(this.currentLanguages);
         this.setLanguage('en');
     }
@@ -25,6 +31,10 @@ class GlobalLocalizationService {
      */
     public setLanguage(lang: string) {
         locale.set(lang);
+    }
+
+    public getLanguage(): string {
+        return null; // TODO
     }
 
     /**
