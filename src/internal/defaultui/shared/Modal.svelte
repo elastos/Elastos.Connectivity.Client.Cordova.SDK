@@ -21,7 +21,8 @@
   import * as svelte from 'svelte';
   import { fade } from 'svelte/transition';
   import { createEventDispatcher } from "svelte";
-import type { ModalCallbacks } from './modalcallbacks';
+  import type { ModalCallbacks } from './modalcallbacks';
+  import { globalThemeService } from '../../../services/global.theme.service';
 
   const dispatch = createEventDispatcher();
 
@@ -282,6 +283,11 @@ import type { ModalCallbacks } from './modalcallbacks';
   .close:hover, .close:focus, .close:active {
     outline: none;
   }
+
+  .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
+  }
 </style>
 
 <svelte:window on:keydown={handleKeydown}/>
@@ -306,6 +312,7 @@ import type { ModalCallbacks } from './modalcallbacks';
         on:introend={onOpened}
         on:outroend={onClosed}
         style={cssWindow}
+        class:dark-mode={globalThemeService.darkMode}
       >
         {#if state.closeButton}
           {#if isFunction(state.closeButton)}

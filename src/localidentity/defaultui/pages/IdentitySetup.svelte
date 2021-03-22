@@ -5,7 +5,7 @@
     import { Swiper, SwiperSlide } from 'swiper/svelte';
     import SwiperCore, { Navigation, Pagination, Scrollbar } from 'swiper/core';
     import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
-    
+
     // https://swiperjs.com/svelte
 
     import { DIDPublicationStatus } from '../../model/didpublicationstatus.model';
@@ -296,6 +296,8 @@
 
     onMount(async () => {
         console.log("Mounting IdentitySetup component");
+        console.log("Is everything ready?", component.isEverythingReady());
+        console.log("Was temporary identity creation started?", component.wasTemporaryIdentityCreationStarted());
         navParams = navService.activeView.params as IdentitySetupNavParams;
 		if (!component.isEverythingReady() && component.wasTemporaryIdentityCreationStarted()) {
             // Basic Identity configuration is not complete. So we are going to resume at the step we were earlier.
@@ -479,9 +481,9 @@
 </style>
 
 <content>
-    {#if componentWatcher("wasTemporaryIdentityCreationStarted")}
+    {#if !componentWatcher("wasTemporaryIdentityCreationStarted")}
         <div class="swiper-container" class:dark-mode={globalThemeService.darkMode}>
-            <Swiper 
+            <Swiper
                 bind:swiper={swiper} {swiperOptions} spaceBetween={50} slidesPerView={1}
                 pagination={{ clickable: true }} on:slideChange={component.onSwiped} on:swiper={(e) => console.log(e.detail[0])}
             >
