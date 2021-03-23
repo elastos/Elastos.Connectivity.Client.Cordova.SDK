@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const MomentLocalesPlugin = require('moment-locales-webpack-plugin');
 
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
@@ -87,6 +88,12 @@ module.exports = {
 			}
 		]
 	},
+	externals: {
+		"@lottiefiles/svelte-lottie-player": "@lottiefiles/svelte-lottie-player",
+		"moment": "moment",
+		"web3": "web3",
+		"web3-core": "web3-core"
+	},
 	mode,
 	plugins: [
 		new MiniCssExtractPlugin({
@@ -97,6 +104,10 @@ module.exports = {
 				{ from: 'src/assets/', to: 'assets/' }
 			]
 		}),
+		// Keep only a few locales to save space
+		new MomentLocalesPlugin({
+            localesToKeep: ['en', 'fr', 'zh-cn'],
+        }),
 		//new BundleAnalyzerPlugin()
 	],
 	devtool: prod ? false : 'source-map',
