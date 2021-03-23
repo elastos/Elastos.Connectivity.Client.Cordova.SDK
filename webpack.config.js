@@ -1,6 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const mode = process.env.NODE_ENV || 'development';
 const prod = mode === 'production';
@@ -95,7 +96,8 @@ module.exports = {
 			patterns: [
 				{ from: 'src/assets/', to: 'assets/' }
 			]
-		})
+		}),
+		//new BundleAnalyzerPlugin()
 	],
 	devtool: prod ? false : 'source-map',
 	devServer: {

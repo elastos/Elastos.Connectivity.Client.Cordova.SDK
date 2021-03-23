@@ -35,7 +35,7 @@
             titleBarManager.setIcon(TitleBarPlugin.TitleBarIconSlot.INNER_LEFT, null);
             titleBarManager.removeOnItemClickedListener(this.titleBarListener);
             this.titleBarListener = null;
-        }*/ 
+        }*/
 
         public showPaperkey() {
             hidePaperkey = !hidePaperkey;
@@ -87,57 +87,12 @@
 </script>
 
 <style lang="scss">
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 300;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-Light.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 400;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-Regular.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 500;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-Medium.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 600;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-SemiBold.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 700;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-Bold.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 800;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-ExtraBold.ttf');
-    }
-    @font-face {
-        font-family: 'Montserrat';
-        font-weight: 900;
-        font-style: normal;
-        src: url('assets/localidentity/fonts/montserrat/Montserrat-Black.ttf');
-    }
-
     :root {
-        font-family: 'Montserrat';
-
         :focus {
             outline: none;
         }
     }
-  
+
     button {
         height: 50px;
         width: 100%;
@@ -242,5 +197,5 @@
     </CopyToClipboard>
     {:else}
     <p>{$_('exportidentity.paperkey-copied-msg')}</p>
-    {/if} 
+    {/if}
 </footer>
