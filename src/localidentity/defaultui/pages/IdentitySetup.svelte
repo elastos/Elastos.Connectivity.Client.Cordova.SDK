@@ -4,7 +4,6 @@
 	import { onMount } from 'svelte';
     import { Swiper, SwiperSlide } from 'swiper/svelte';
     import SwiperCore, { Navigation, Pagination, Scrollbar } from 'swiper/core';
-    import { LottiePlayer } from '@lottiefiles/svelte-lottie-player';
 
     // https://swiperjs.com/svelte
 
@@ -497,26 +496,20 @@
                     <h2>{$_("my-first-did")}</h2>
                 </SwiperSlide>
                 <SwiperSlide>
-                    <LottiePlayer
-                        src="assets/localidentity/animations/fingerprint.json"
-                        background="transparent"
-                        speed="1"
-                        style="width: 150px; height: 150px;"
-                        autoplay="{true}"
-                        loop="{true}"
-                    />
+                    {#if !globalThemeService.darkMode}
+                        <img id="first-slide-img" src="assets/localidentity/icons/did.svg" alt="" />
+                    {:else}
+                        <img id="first-slide-img" src="assets/localidentity/icons/darkmode/did.svg" alt="">
+                     {/if}
                     <p>{$_("identitysetup.slide2-msg")}</p>
                     <p>{$_("identitysetup.slide2-msg2")}</p>
                 </SwiperSlide>
                 <SwiperSlide>
-                    <LottiePlayer
-                        src="assets/localidentity/animations/device.json"
-                        background="transparent"
-                        speed="1"
-                        style="width: 300px; height: 300px;"
-                        autoplay="{true}"
-                        loop="{true}"
-                    />
+                    {#if !globalThemeService.darkMode}
+                        <img id="first-slide-img" src="assets/localidentity/icons/did.svg" alt="" />
+                    {:else}
+                        <img id="first-slide-img" src="assets/localidentity/icons/darkmode/did.svg" alt="">
+                     {/if}
                     <p>
                         {$_("identitysetup.slide3-msg")}
                     </p>
@@ -590,14 +583,11 @@
                 </div>
             {:else}
                 <div class="done-msg">
-                    <LottiePlayer
-                        src="assets/localidentity/animations/checkmark.json"
-                        background="transparent"
-                        speed="1"
-                        style="width: 150px; height: 150px;"
-                        autoplay={true}
-                        loop={true}
-                    />
+                    {#if !globalThemeService.darkMode}
+                        <img id="first-slide-img" src="assets/localidentity/icons/did.svg" alt="" />
+                    {:else}
+                        <img id="first-slide-img" src="assets/localidentity/icons/darkmode/did.svg" alt="">
+                     {/if}
                     <p>{$_("identitysetup.done-msg")}</p>
                 </div>
             {/if}

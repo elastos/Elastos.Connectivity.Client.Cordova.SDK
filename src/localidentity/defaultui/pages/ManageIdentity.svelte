@@ -92,7 +92,7 @@
 
 <grid class="container" class:dark-mode={globalThemeService.darkMode}>
     {#if !globalThemeService.darkMode}
-            <img src="assets/localidentity/icons/did.svg" alt="">
+        <img src="assets/localidentity/icons/did.svg" alt="">
     {:else}
         <img src="assets/localidentity/icons/darkmode/did.svg" alt="">
     {/if}
