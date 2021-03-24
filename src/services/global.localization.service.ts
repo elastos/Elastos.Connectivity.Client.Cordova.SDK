@@ -1,9 +1,10 @@
-import { dictionary, locale } from 'svelte-i18n';
 import { en } from '../assets/localidentity/languages/en';
 import { fr } from '../assets/localidentity/languages/fr';
 import { zh } from '../assets/localidentity/languages/zh';
+import { getGlobalSingleton } from '../singleton';
+import { format, getMessageFormatter, dictionary, locale } from "svelte-i18n";
 
-console.log("localization import");
+console.log("GlobalLocalizationService ENTRY");
 
 class GlobalLocalizationService {
     private activeLanguage;
@@ -13,18 +14,14 @@ class GlobalLocalizationService {
         zh: zh
     }
     private currentLanguages = this.baseLanguages;
-    rand = Math.random();
 
     constructor() {
-        window["localizationtest"] = window["localizationtest"] ? window["localizationtest"]+1 : 0;
-        console.log("localization constructor", window["localizationtest"], this.rand);
         this.init();
     }
 
     private init() {
-        console.log("localization init", this.rand);
         locale.subscribe((lang)=>{
-            console.log("LANG CHANGED:", lang, this.rand);
+            console.log("LANG CHANGED:", lang);
             this.activeLanguage = lang;
         });
 
@@ -36,7 +33,7 @@ class GlobalLocalizationService {
      * Sets the active language for all UI items.
      */
     public setLanguage(lang: string) {
-        console.log("Setting connectivity SDK language to: ", lang, this.rand);
+        console.log("Setting connectivity SDK language to: ", lang);
         locale.set(lang);
     }
 
@@ -55,6 +52,14 @@ class GlobalLocalizationService {
         this.currentLanguages[lang] = translations;
         dictionary.set(this.currentLanguages);
     }
+
+    public translateInstant(key: string): string {
+        return getMessageFormatter(key).format() as string;
+    }
 }
 
-export const globalLocalizationService = new GlobalLocalizationService();
+export const globalLocalizationService = getGlobalSingleton("localization", ()=>new GlobalLocalizationService());
+export {
+    format as _,
+    getMessageFormatter
+};

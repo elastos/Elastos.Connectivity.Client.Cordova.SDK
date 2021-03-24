@@ -10,11 +10,12 @@
 </style>
 
 <script lang="ts">
-    import { _ } from 'svelte-i18n';
+    //import { _ } from 'svelte-i18n';
     import { connectivity } from '../../../connectivity';
     import type { IConnector } from '../../../interfaces/connectors';
     import { modal } from '../shared/stores';
     import { globalModalService } from '../../../services/global.modal.service';
+    import { globalLocalizationService, _ } from '../../../services/global.localization.service';
 
     export let onSelection = null;
 

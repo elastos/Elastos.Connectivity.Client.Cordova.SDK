@@ -1,6 +1,7 @@
 import { connectivity } from "../connectivity";
 import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
+import { getGlobalSingleton } from "../singleton";
 
 class GlobalStorageService {
   private storageLayer: IKeyValueStorage = new DefaultKeyValueStorage();
@@ -57,5 +58,5 @@ class GlobalStorageService {
   }
 }
 
-export const globalStorageService = new GlobalStorageService();
+export const globalStorageService = getGlobalSingleton("storage", ()=>new GlobalStorageService());
 

@@ -1,3 +1,5 @@
+import { getGlobalSingleton } from "../singleton";
+
 // TODO: IMPLEMENT / IMPROVE
 class GlobalThemeService {
     public darkMode: boolean = false;
@@ -9,5 +11,5 @@ class GlobalThemeService {
     }
 }
 
-export const globalThemeService = new GlobalThemeService();
+export const globalThemeService = getGlobalSingleton("theme", ()=>new GlobalThemeService());
 

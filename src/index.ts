@@ -4,7 +4,7 @@ import * as Wallet from "./wallet";
 import * as Ethereum from "./ethereum";
 import { connectivity } from "./connectivity";
 import * as Interfaces from "./interfaces";
-import { globalLocalizationService as localization } from "./services/global.localization.service";
+import { globalLocalizationService as localization, _ } from "./services/global.localization.service";
 import { globalThemeService as theme } from "./services/global.theme.service";
 import { globalStorageService as storage } from "./services/global.storage.service";
 
@@ -27,5 +27,6 @@ export {
     connectivity,
     localization,
     theme,
-    storage
+    storage,
+    _ // svelte i18n
 }
