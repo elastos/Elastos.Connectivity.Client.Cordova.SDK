@@ -14,8 +14,8 @@
       "node_modules",
     ],
     "types": [
-      "elastos-cordova-plugin-did",
-      "elastos-cordova-plugin-hive",
+      "@elastosfoundation/elastos-cordova-plugin-did",
+      "@elastosfoundation/elastos-cordova-plugin-hive",
       "svelte",
       "svelte/store",
       "svelte/motion",
