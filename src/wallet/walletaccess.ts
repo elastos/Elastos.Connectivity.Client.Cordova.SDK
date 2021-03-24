@@ -1,8 +1,18 @@
+import { connectivity } from "..";
 import { IWalletConnectorAPI } from "../interfaces/connectors/iwalletconnectorapi";
+import { ConnectivityHelper } from "../internal/connectivityhelper";
+import type { PayQuery, SmartContractQuery, TransactionResult } from "./model/transaction.model";
 
 export class WalletAccess {
-    pay() {
-        throw new Error("Method not implemented.");
+    pay(query: PayQuery): Promise<TransactionResult> {
+        return new Promise((resolve)=>{
+            ConnectivityHelper.ensureActiveConnector(async ()=>{
+                let result = await connectivity.getActiveConnector().pay(query);
+                resolve(result);
+            }, ()=>{
+                resolve(null);
+            });
+        });
     }
     voteForDPoS() {
         throw new Error("Method not implemented.");
@@ -13,7 +23,7 @@ export class WalletAccess {
     voteForCRProposal() {
         throw new Error("Method not implemented.");
     }
-    sendSmartContractTransaction() {
+    sendSmartContractTransaction(query: SmartContractQuery): Promise<TransactionResult> {
         throw new Error("Method not implemented.");
     }
 }

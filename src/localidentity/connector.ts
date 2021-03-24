@@ -3,6 +3,7 @@ import type { Connectors } from "../interfaces";
 import { identityService } from "./services/identity.service";
 import type { GetCredentialsQuery } from "../did/model/getcredentialsquery";
 import { _, getMessageFormatter } from 'svelte-i18n';
+import type { PayQuery, TransactionResult } from "../wallet";
 
 export class LocalIdentityConnector implements Connectors.IConnector {
     public name: string = "local-identity";
@@ -46,7 +47,7 @@ export class LocalIdentityConnector implements Connectors.IConnector {
      * Wallet API
      */
 
-     async pay() {
+    async pay(query: PayQuery): Promise<TransactionResult> {
         throw new Error("Method not implemented.");
     }
 

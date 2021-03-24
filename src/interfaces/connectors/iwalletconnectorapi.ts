@@ -1,5 +1,7 @@
+import type { PayQuery, TransactionResult } from "../../wallet";
+
 export interface IWalletConnectorAPI {
-    pay(): Promise<void>;
+    pay(query: PayQuery): Promise<TransactionResult>;
     voteForDPoS(): Promise<void>;
     voteForCRCouncil(): Promise<void>;
     voteForCRProposal(): Promise<void>;
