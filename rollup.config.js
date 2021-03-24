@@ -1,8 +1,9 @@
+import path from "path";
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
-import css from 'rollup-plugin-css-only';
+import postcss from 'rollup-plugin-postcss';
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 //import analyze from 'rollup-plugin-analyzer';
@@ -31,9 +32,10 @@ export default {
 				dev: !production
 			}
 		}),
-		// we'll extract any component CSS out into
-		// a separate file - better for performance
-		css({ output: 'bundle.css' }),
+
+		postcss({
+            extract: 'bundle.css'
+         }),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
