@@ -1,4 +1,4 @@
-import { connectivity } from "..";
+import { connectivity } from "../connectivity";
 
 export class ConnectivityHelper {
     /**

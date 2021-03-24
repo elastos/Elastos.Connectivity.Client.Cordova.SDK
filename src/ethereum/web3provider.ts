@@ -1,4 +1,4 @@
-import { connectivity } from "..";
+import { connectivity } from "../connectivity";
 
 /*
  * Types imported from the WEB3 ethereum library.

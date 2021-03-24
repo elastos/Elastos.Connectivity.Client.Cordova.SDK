@@ -1,4 +1,4 @@
-import { connectivity } from "..";
+import { connectivity } from "../connectivity";
 import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../interfaces/ilogger";
 import { ConnectivityHelper } from "../internal/connectivityhelper";

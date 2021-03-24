@@ -1,16 +1,14 @@
 import type { IGenericUIHandler } from "./interfaces/ui/igenericuihandler";
 import type { ILocalIdentityUIHandler } from "./interfaces/ui/ilocalidentityuihandler";
-import { GenericUIHandler } from "./internal/defaultui/genericuihandler";
-import { LocalIdentityUIHandler } from "./localidentity/defaultui/localidentityuihandler";
 import type { IConnector } from "./interfaces/connectors/iconnector";
 import { globalStorageService } from "./services/global.storage.service";
 import { DIDHelper } from "./did/internal/didhelper";
 
-export class Connectivity {
+class Connectivity {
     private connectors: IConnector[] = [];
     private activeConnector: IConnector | null = null;
-    public genericUIHandler: IGenericUIHandler = new GenericUIHandler();
-    public localIdentityUIHandler: ILocalIdentityUIHandler = new LocalIdentityUIHandler();
+    public genericUIHandler: IGenericUIHandler = null;
+    public localIdentityUIHandler: ILocalIdentityUIHandler = null;
     private applicationDID: string = null;
 
     constructor() {}
@@ -129,3 +127,5 @@ export class Connectivity {
         this.localIdentityUIHandler = customUIHandler
     }
 }
+
+export const connectivity = new Connectivity();

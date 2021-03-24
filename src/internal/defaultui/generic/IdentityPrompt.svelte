@@ -11,7 +11,7 @@
 
 <script lang="ts">
     import { _ } from 'svelte-i18n';
-    import { connectivity } from '../../..';
+    import { connectivity } from '../../../connectivity';
     import type { IConnector } from '../../../interfaces/connectors';
     import { modal } from '../shared/stores';
     import { globalModalService } from '../../../services/global.modal.service';

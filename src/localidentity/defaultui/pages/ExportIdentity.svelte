@@ -2,7 +2,6 @@
     import { onMount } from 'svelte';
     import CopyToClipboard from "svelte-copy-to-clipboard";
     import { _ } from 'svelte-i18n';
-    import { connectivity } from '../../..';
     import { globalThemeService } from '../../../services/global.theme.service';
     import { identityService } from '../../services/identity.service';
 

@@ -1,4 +1,4 @@
-import { connectivity } from "..";
+import { connectivity } from "../connectivity";
 import type { Connectors } from "../interfaces";
 import { identityService } from "./services/identity.service";
 import type { GetCredentialsQuery } from "../did/model/getcredentialsquery";

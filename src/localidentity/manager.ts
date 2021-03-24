@@ -1,4 +1,4 @@
-import { connectivity } from "..";
+import { connectivity } from "../connectivity";
 import { identityService } from "./services/identity.service";
 
 class LocalIdentityManager {

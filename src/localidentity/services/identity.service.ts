@@ -1,4 +1,4 @@
-import { DID } from '../..';
+import { DIDAccess } from '../../did';
 import { DIDPublicationStatus } from '../model/didpublicationstatus.model';
 import { HiveCreationStatus } from '../model/hivecreationstatus.model';
 import { persistenceService } from './persistence.service';
@@ -51,10 +51,10 @@ type AssistTransactionStatusResponse = AssistBaseResponse & {
 }
 
 class IdentityService {
-    private didHelper: DID.DIDAccess;
+    private didHelper: DIDAccess;
 
     constructor() {
-        this.didHelper = new DID.DIDAccess();
+        this.didHelper = new DIDAccess();
     }
 
     /**

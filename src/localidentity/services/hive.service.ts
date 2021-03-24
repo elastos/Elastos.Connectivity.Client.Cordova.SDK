@@ -1,4 +1,4 @@
-import { Hive } from '../..';
+import { AuthHelper } from '../../hive';
 import { HiveCreationStatus } from '../model/hivecreationstatus.model';
 import { persistenceService } from './persistence.service';
 
@@ -18,7 +18,7 @@ class HiveService {
             if (this.hiveClient && !forceNewClient)
                 resolve(this.hiveClient);
 
-            let hiveAuthHelper = new Hive.AuthHelper();
+            let hiveAuthHelper = new AuthHelper();
             this.hiveClient = await hiveAuthHelper.getClientWithAuth((e)=>{
                 // Auth error
                 console.error("Hive authentication error");
@@ -49,7 +49,7 @@ class HiveService {
     public async prepareHiveVault(): Promise<boolean> {
         console.log("Preparing hive vault");
 
-        let hiveAuthHelper = new Hive.AuthHelper();
+        let hiveAuthHelper = new AuthHelper();
         let hiveClient = await hiveAuthHelper.getClientWithAuth((err)=>{
             console.error("Hive authentication error!", err);
         });
