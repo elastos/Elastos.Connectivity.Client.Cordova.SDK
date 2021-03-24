@@ -5,7 +5,7 @@ import { ConnectivityHelper } from "../internal/connectivityhelper";
 import { DefaultLogger } from "../internal/defaultlogger";
 import { globalStorageService } from "../services/global.storage.service";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
-import { DIDHelper } from "./internal/didhelper";
+import { DIDHelper } from "./didhelper";
 import type { GetCredentialsQuery } from "./model/getcredentialsquery";
 import { Utils } from "./utils";
 import moment from 'moment';

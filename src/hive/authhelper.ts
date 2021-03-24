@@ -2,7 +2,7 @@ import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../interfaces/ilogger";
 import { DIDAccess } from "../did";
 import { DefaultLogger } from "../internal/defaultlogger";
-import { DIDHelper } from "../did/internal/didhelper";
+import { DIDHelper } from "../did/didhelper";
 import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
 

@@ -3,6 +3,8 @@ import { en } from '../assets/localidentity/languages/en';
 import { fr } from '../assets/localidentity/languages/fr';
 import { zh } from '../assets/localidentity/languages/zh';
 
+console.log("localization import");
+
 class GlobalLocalizationService {
     private activeLanguage;
     private baseLanguages = {
@@ -11,14 +13,18 @@ class GlobalLocalizationService {
         zh: zh
     }
     private currentLanguages = this.baseLanguages;
+    rand = Math.random();
 
     constructor() {
+        window["localizationtest"] = window["localizationtest"] ? window["localizationtest"]+1 : 0;
+        console.log("localization constructor", window["localizationtest"], this.rand);
         this.init();
     }
 
     private init() {
+        console.log("localization init", this.rand);
         locale.subscribe((lang)=>{
-            console.log("LANG CHANGED:", lang);
+            console.log("LANG CHANGED:", lang, this.rand);
             this.activeLanguage = lang;
         });
 
@@ -30,6 +36,7 @@ class GlobalLocalizationService {
      * Sets the active language for all UI items.
      */
     public setLanguage(lang: string) {
+        console.log("Setting connectivity SDK language to: ", lang, this.rand);
         locale.set(lang);
     }
 

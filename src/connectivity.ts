@@ -1,14 +1,12 @@
 import type { IGenericUIHandler } from "./interfaces/ui/igenericuihandler";
-import type { ILocalIdentityUIHandler } from "./interfaces/ui/ilocalidentityuihandler";
 import type { IConnector } from "./interfaces/connectors/iconnector";
 import { globalStorageService } from "./services/global.storage.service";
-import { DIDHelper } from "./did/internal/didhelper";
+import { DIDHelper } from "./did/didhelper";
 
 class Connectivity {
     private connectors: IConnector[] = [];
     private activeConnector: IConnector | null = null;
     public genericUIHandler: IGenericUIHandler = null;
-    public localIdentityUIHandler: ILocalIdentityUIHandler = null;
     private applicationDID: string = null;
 
     constructor() {}
@@ -117,14 +115,6 @@ class Connectivity {
      */
     public setGenericUIHandler(customUIHandler: IGenericUIHandler) {
         this.genericUIHandler = customUIHandler
-    }
-
-    /**
-     * Overwrites the default UI for local identity prompts (ex: local identity creation) with a
-     * custom UI handler.
-     */
-    public setLocalIdentityUIHandler(customUIHandler: ILocalIdentityUIHandler) {
-        this.localIdentityUIHandler = customUIHandler
     }
 }
 

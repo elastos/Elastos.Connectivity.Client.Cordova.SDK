@@ -1,4 +1,5 @@
 import { DIDAccess } from "./didaccess";
+import { DIDHelper } from "./didhelper";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import type { UICustomization,  GetCredentialsQuery } from "./model/getcredentialsquery";
 
@@ -9,6 +10,7 @@ export type {
 }
 
 export {
-    DIDAccess
+    DIDAccess,
+    DIDHelper
 }
 

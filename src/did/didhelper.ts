@@ -1,11 +1,11 @@
 import moment from "moment";
-import type { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
-import type { ILogger } from "../../interfaces/ilogger";
-import { DefaultLogger } from "../../internal/defaultlogger";
-import { Utils } from "../utils";
-import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
-import { globalStorageService } from "../../services/global.storage.service";
-import type { IConnector } from "../../interfaces/connectors";
+import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
+import type { ILogger } from "../interfaces/ilogger";
+import { DefaultLogger } from "../internal/defaultlogger";
+import { Utils } from "./utils";
+import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
+import { globalStorageService } from "../services/global.storage.service";
+import type { IConnector } from "../interfaces/connectors";
 
 declare let didManager: DIDPlugin.DIDManager;
 
