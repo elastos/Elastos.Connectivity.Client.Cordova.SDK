@@ -1,3 +1,11 @@
+/*
+import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import BundleAnalyzerPlugin from 'webpack-bundle-analyzer';
+import MomentLocalesPlugin from 'moment-locales-webpack-plugin';
+import path from 'path';
+*/
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -25,7 +33,9 @@ module.exports = {
 	output: {
 		path: path.join(__dirname, '/dist'),
 		filename: 'index.js',
-		libraryTarget: "umd",
+		libraryTarget: 'umd',
+		library: 'ElastosConnectivitySDKCordova',
+		umdNamedDefine: true,
 		publicPath:'/dist'
 	},
 	module: {
@@ -33,7 +43,7 @@ module.exports = {
 			{
 				test: /\.tsx?$/,
 				use: 'ts-loader',
-				exclude: /node_modules/,
+				exclude: /node_modules/
 			},
 			{
 				test: /\.svelte$/,

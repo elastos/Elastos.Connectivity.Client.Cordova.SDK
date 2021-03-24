@@ -1,7 +1,39 @@
-import type { AbstractProvider, RequestArguments } from "web3-core";
-import type { JsonRpcResponse, JsonRpcPayload } from "web3-core-helpers";
 import { connectivity } from "..";
 
+/*
+ * Types imported from the WEB3 ethereum library.
+ */
+
+export interface JsonRpcPayload {
+    jsonrpc: string;
+    method: string;
+    params: any[];
+    id?: string | number;
+}
+
+export interface JsonRpcResponse {
+    jsonrpc: string;
+    id: number;
+    result?: any;
+    error?: string;
+}
+
+export interface RequestArguments {
+    method: string;
+    params?: any;
+    [key: string]: any;
+}
+
+export interface AbstractProvider {
+    sendAsync(payload: JsonRpcPayload, callback: (error: Error | null, result?: JsonRpcResponse) => void): void;
+    send?(payload: JsonRpcPayload, callback: (error: Error | null, result?: JsonRpcResponse) => void): void;
+    request?(args: RequestArguments): Promise<any>;
+    connected?: boolean;
+}
+
+/**
+ * Custom Elastos Web3 provider
+ */
 export class ElastosWeb3Provider implements AbstractProvider {
     constructor(private rpcApiEndpoint: string) {}
 

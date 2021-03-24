@@ -8,7 +8,7 @@ import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./internal/didhelper";
 import type { GetCredentialsQuery } from "./model/getcredentialsquery";
 import { Utils } from "./utils";
-const moment = require('moment');
+import moment from 'moment';
 
 declare let didManager: DIDPlugin.DIDManager;
 

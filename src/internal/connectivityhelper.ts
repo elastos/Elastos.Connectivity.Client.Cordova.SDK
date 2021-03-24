@@ -18,8 +18,10 @@ export class ConnectivityHelper {
                 let selectedConnectorName = await connectivity.genericUIHandler.showConnectorChooser();
                 if (selectedConnectorName)
                     onActiveConnector();
-                else
+                else {
+                    console.warn("Cannot ensure active connector. No connector available, or user did not pick one");
                     onCancelled();
+                }
             }
         }
     }
