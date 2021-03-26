@@ -1,12 +1,13 @@
 {
   "name": "@elastosfoundation/elastos-connectivity-sdk-cordova",
-  "version": "1.0.9",
+  "version": "1.0.13",
   "description": "Elastos Cordova connectivity SDK to bridge mobile Apps with Elastos wallets",
   "main": "dist/index.js",
   "module": "dist.esm/index.js",
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "clean": "rm -rf dist/ dist.esm/",
     "prepublish": "npm run build",
     "validate": "svelte-check"
   },
@@ -15,7 +16,6 @@
     "url": "git+https://github.com/elastos/Elastos.Connectivity.Client.Cordova.SDK.git"
   },
   "files": [
-    "index.d.ts",
     "dist",
     "dist.esm"
   ],

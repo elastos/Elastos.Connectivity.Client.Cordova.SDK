@@ -7,6 +7,7 @@ import * as Interfaces from "./interfaces";
 import { globalLocalizationService as localization, _ } from "./services/global.localization.service";
 import { globalThemeService as theme } from "./services/global.theme.service";
 import { globalStorageService as storage } from "./services/global.storage.service";
+import { globalLoggerService as logger } from "./services/global.logger.service";
 
 import { GenericUIHandler } from "./internal/defaultui/genericuihandler";
 
@@ -28,5 +29,6 @@ export {
     localization,
     theme,
     storage,
+    logger,
     _ // svelte i18n
 }

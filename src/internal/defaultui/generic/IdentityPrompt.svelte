@@ -38,9 +38,9 @@
             action: "external"
         };
         appManager.sendIntentResponse(null, responseParams, this.dappService.getReceivedIntent().intentId, ()=>{
-            console.log("Proxy intent response sent, original request:", this.dappService.getReceivedIntent(), "Response params:", responseParams);
+            logger.log("Proxy intent response sent, original request:", this.dappService.getReceivedIntent(), "Response params:", responseParams);
         }, (err)=>{
-            console.log("Failed to send intent response:", err);
+            logger.log("Failed to send intent response:", err);
         });*/
     }
 
@@ -56,9 +56,9 @@
             action: "internal"
         };
         appManager.sendIntentResponse(null, responseParams, this.dappService.getReceivedIntent().intentId, ()=>{
-            console.log("Proxy intent response sent, original request:", this.dappService.getReceivedIntent(), "Response params:", responseParams);
+            logger.log("Proxy intent response sent, original request:", this.dappService.getReceivedIntent(), "Response params:", responseParams);
         }, (err)=>{
-            console.log("Failed to send intent response:", err);
+            logger.log("Failed to send intent response:", err);
         });*/
     }
 </script>

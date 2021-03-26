@@ -1,3 +1,5 @@
+import { globalLoggerService as logger } from "../services/global.logger.service";
+
 declare let didManager: DIDPlugin.DIDManager;
 
 export class Utils {
@@ -9,7 +11,7 @@ export class Utils {
     return new Promise((resolve, reject)=>{
       didManager.resolveDidDocument(did, false, (document)=>{
         if (!document) {
-          console.log("getVaultProviderAddress("+did+"): DID document not found");
+          logger.log("getVaultProviderAddress("+did+"): DID document not found");
           resolve(null);
         }
         else {
@@ -21,12 +23,12 @@ export class Utils {
           if (vaultService)
             resolve(vaultService.getEndpoint());
           else {
-            console.log("getVaultProviderAddress("+did+"): DID document found but no vault entry inside", document);
+            logger.log("getVaultProviderAddress("+did+"): DID document found but no vault entry inside", document);
             resolve(null);
           }
         }
       }, (err)=>{
-        console.error("getVaultProviderAddress("+did+"): failed to resolve the DID Document", err);
+        logger.error("getVaultProviderAddress("+did+"): failed to resolve the DID Document", err);
         resolve(null);
       })
     });

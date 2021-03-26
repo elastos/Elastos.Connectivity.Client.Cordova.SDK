@@ -1,26 +1,15 @@
-import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
-import type { ILogger } from "../interfaces/ilogger";
 import { DIDAccess } from "../did";
-import { DefaultLogger } from "../internal/defaultlogger";
 import { DIDHelper } from "../did/didhelper";
-import { DefaultKeyValueStorage } from "../internal/defaultkeyvaluestorage";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
+import { globalLoggerService as  logger } from "../services/global.logger.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 declare let hiveManager: HivePlugin.HiveManager;
 
 export class AuthHelper {
   private didAccess: DIDAccess;
-  private logger = new DefaultLogger();
 
   constructor() {
-  }
-
-  /**
-   * Overrides the default console logger with a custom logger.
-   */
-  public setLogger(logger: ILogger) {
-    this.logger = logger;
   }
 
   /**
@@ -31,19 +20,18 @@ export class AuthHelper {
     return new Promise(async (resolve)=>{
       ConnectivityHelper.ensureActiveConnector(async ()=>{
         this.didAccess = new DIDAccess();
-        this.didAccess.setLogger(this.logger);
 
         let authHelper = this;
 
         // Initiate or retrieve an application instance DID. This DID is used to sign authentication content
         // for hive. Hive uses the given app instance DID document to verify JWTs received later, using an unpublished
         // app instance DID.
-        this.logger.log("Getting an app instance DID");
+        logger.log("Getting an app instance DID");
         let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID();
 
-        this.logger.log("Getting app instance DID document");
+        logger.log("Getting app instance DID document");
         appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument)=>{
-          this.logger.log("Got app instance DID document. Now creating the Hive client", didDocument);
+          logger.log("Got app instance DID document. Now creating the Hive client", didDocument);
           let client = await hiveManager.getClient({
             authenticationHandler: new class AuthenticationHandler implements HivePlugin.AuthenticationHandler {
               /**
@@ -52,12 +40,12 @@ export class AuthHelper {
                * including a appid certification credential provided by the identity application.
                */
               async authenticationChallenge(jwtToken: string): Promise<string> {
-                authHelper.logger.log("Hive client authentication challenge callback is being called with token:", jwtToken);
+                logger.log("Hive client authentication challenge callback is being called with token:", jwtToken);
                 try {
                   return await authHelper.handleVaultAuthenticationChallenge(jwtToken);
                 }
                 catch (e) {
-                  authHelper.logger.error("Exception in authentication handler:", e);
+                  logger.error("Exception in authentication handler:", e);
                   if (onAuthError)
                     onAuthError(e);
                   return null;
@@ -67,10 +55,10 @@ export class AuthHelper {
             authenticationDIDDocument: await didDocument.toJson()
           });
 
-          this.logger.log("Hive client initialization completed");
+          logger.log("Hive client initialization completed");
           resolve(client);
         }, (err)=>{
-          this.logger.error(err);
+          logger.error(err);
         });
       }, ()=>{
         resolve(null);
@@ -100,7 +88,7 @@ export class AuthHelper {
    * issued by the end user earlier.
    */
   private generateAuthPresentationJWT(authChallengeJwttoken: string): Promise<string> {
-    this.logger.log("Starting process to generate hive auth presentation JWT");
+    logger.log("Starting process to generate hive auth presentation JWT");
 
     return new Promise(async (resolve, reject)=>{
       // Parse, but verify on chain that this JWT is valid first
@@ -122,43 +110,43 @@ export class AuthHelper {
       let nonce = parseResult.payload["nonce"] as string;
       let realm = parseResult.payload["iss"] as string;
 
-      this.logger.log("Getting app instance DID");
+      logger.log("Getting app instance DID");
       let appInstanceDID = (await this.didAccess.getOrCreateAppInstanceDID()).did;
 
       let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
 
-      this.logger.log("Getting app identity credential");
+      logger.log("Getting app identity credential");
       let appIdCredential = await this.didAccess.getExistingAppIdentityCredential();
 
       if (!appIdCredential) {
-        this.logger.log("Empty app id credential. Trying to generate a new one");
+        logger.log("Empty app id credential. Trying to generate a new one");
 
         appIdCredential = await this.didAccess.generateAppIdCredential();
         if (!appIdCredential) {
-          this.logger.warn("Failed to generate a new App ID credential");
+          logger.warn("Failed to generate a new App ID credential");
           resolve(null);
           return;
         }
       }
 
       // Create the presentation that includes hive back end challenge (nonce) and the app id credential.
-      this.logger.log("Creating DID presentation response for Hive authentication challenge"),
+      logger.log("Creating DID presentation response for Hive authentication challenge"),
       appInstanceDID.createVerifiablePresentation([
         appIdCredential
       ], realm, nonce, appInstanceDIDInfo.storePassword, async (presentation)=>{
         if (presentation) {
           // Generate the hive back end authentication JWT
-          this.logger.log("Opening DID store to create a JWT for presentation:", presentation);
+          logger.log("Opening DID store to create a JWT for presentation:", presentation);
           let didStore = await DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
 
-          this.logger.log("Loading DID document");
+          logger.log("Loading DID document");
           didStore.loadDidDocument(appInstanceDIDInfo.didString, async (didDocument)=>{
             let validityDays = 2;
-            this.logger.log("Creating JWT");
+            logger.log("Creating JWT");
             didDocument.createJWT({
               presentation: JSON.parse(await presentation.toJson())
             }, validityDays, appInstanceDIDInfo.storePassword, (jwtToken)=>{
-              this.logger.log("JWT created for presentation:", jwtToken);
+              logger.log("JWT created for presentation:", jwtToken);
               resolve(jwtToken);
             }, (err)=>{
               reject(err);

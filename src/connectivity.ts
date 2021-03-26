@@ -2,6 +2,7 @@ import type { IGenericUIHandler } from "./interfaces/ui/igenericuihandler";
 import type { IConnector } from "./interfaces/connectors/iconnector";
 import { globalStorageService } from "./services/global.storage.service";
 import { DIDHelper } from "./did/didhelper";
+import { globalLoggerService as logger } from "./services/global.logger.service";
 
 class Connectivity {
     private connectors: IConnector[] = [];
@@ -18,7 +19,7 @@ class Connectivity {
      */
     public async registerConnector(connector: IConnector) {
         if (connector) {
-            console.log("[Elastos Connectivity SDK] Registering connector with name", connector.name);
+            logger.log("Registering connector with name", connector.name);
 
             // Make sure this connector name doesn't exist yet.
             let connectorIndex = this.connectors.findIndex((c)=>c.name === connector.name);
@@ -31,7 +32,7 @@ class Connectivity {
             // if the active one, we re-activate it.
             let activeConnectorName = await globalStorageService.get("activeconnectorname", null);
             if (activeConnectorName == connector.name) {
-                console.log("[Elastos Connectivity SDK] Reactivating previously saved connector:"+activeConnectorName);
+                logger.log("Reactivating previously saved connector:"+activeConnectorName);
                 this.activeConnector = connector;
             }
         }
@@ -57,7 +58,7 @@ class Connectivity {
     public async setActiveConnector(connectorName: string) {
         if (connectorName == null && this.activeConnector) {
             await this.cleanupConnectorContext(this.activeConnector);
-            console.log("Forgetting the currently active connector");
+            logger.log("Forgetting the currently active connector");
             this.activeConnector = null;
         }
         else if (connectorName != null) {
@@ -81,7 +82,7 @@ class Connectivity {
      * This is true for example for hive's App ID credential, that is different for each connector.
      */
     private async cleanupConnectorContext(connector: IConnector): Promise<void> {
-        console.log("[Elastos Connectivity SDK] Cleaning up connector context for: "+connector.name);
+        logger.log("[Elastos Connectivity SDK] Cleaning up connector context for: "+connector.name);
         await new DIDHelper().cleanupConnectorContext(connector);
     }
 

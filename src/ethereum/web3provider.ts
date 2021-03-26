@@ -1,3 +1,4 @@
+import { globalLoggerService as logger } from "../services/global.logger.service";
 import { connectivity } from "../connectivity";
 
 /*
@@ -59,11 +60,11 @@ export class ElastosWeb3Provider implements AbstractProvider {
                     var result = request.responseText;
 
                     try {
-                        console.log("Ethereum JSON RPC call result:", result, "for payload:", payload);
+                        logger.log("Ethereum JSON RPC call result:", result, "for payload:", payload);
                         result = JSON.parse(result);
                         resolve(result);
                     } catch(e) {
-                        console.log("JSON parse error");
+                        logger.log("JSON parse error");
                         reject("Invalid JSON response returned by the JSON RPC");
                     }
                 }
@@ -74,7 +75,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
             };
 
             request.onerror = function(error) {
-                console.error("RPC call error");
+                logger.error("RPC call error");
                 reject(error);
             }
 
@@ -99,7 +100,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
 
     // Mandatory method: sendAsync()
     async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        console.log("Elastos Web3 provider sendAsync payload", payload);
+        logger.log("Elastos Web3 provider sendAsync payload", payload);
 
         switch (payload.method) {
             // Sending transaction is handled by a wallet app intent in order to sign the transaction.
@@ -113,7 +114,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
                     callback(null, result);
                 }
                 catch(e) {
-                    console.log("callJsonRPC catched");
+                    logger.log("callJsonRPC catched");
                     callback(e);
                 }
         }

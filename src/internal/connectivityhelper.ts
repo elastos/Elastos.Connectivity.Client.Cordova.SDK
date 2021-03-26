@@ -1,3 +1,4 @@
+import { globalLoggerService as logger } from "../services/global.logger.service";
 import { connectivity } from "../connectivity";
 
 export class ConnectivityHelper {
@@ -19,7 +20,7 @@ export class ConnectivityHelper {
                 if (selectedConnectorName)
                     onActiveConnector();
                 else {
-                    console.warn("Cannot ensure active connector. No connector available, or user did not pick one");
+                    logger.warn("Cannot ensure active connector. No connector available, or user did not pick one");
                     onCancelled();
                 }
             }

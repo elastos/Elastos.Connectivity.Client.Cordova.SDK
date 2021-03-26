@@ -1,6 +1,7 @@
 import type { IGenericUIHandler } from "../../interfaces/ui/igenericuihandler";
 import { globalModalService } from "../../services/global.modal.service";
 import IdentityPrompt from "./generic/IdentityPrompt.svelte";
+import { globalLoggerService as logger } from "../../services/global.logger.service";
 
 export class GenericUIHandler implements IGenericUIHandler {
     constructor() {}
@@ -9,7 +10,7 @@ export class GenericUIHandler implements IGenericUIHandler {
         return new Promise((resolve)=>{
             globalModalService.getModal().show(IdentityPrompt, {
                 onSelection: (selectedConnectorName)=>{
-                    console.log("Selected connector: "+selectedConnectorName);
+                    logger.log("Selected connector: "+selectedConnectorName);
                     resolve(selectedConnectorName);
                 }
             });

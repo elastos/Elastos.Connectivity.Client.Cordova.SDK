@@ -1,14 +1,12 @@
 import { connectivity } from "../connectivity";
-import type { IKeyValueStorage } from "../interfaces/ikeyvaluestorage";
-import type { ILogger } from "../interfaces/ilogger";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
-import { DefaultLogger } from "../internal/defaultlogger";
 import { globalStorageService } from "../services/global.storage.service";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./didhelper";
 import type { GetCredentialsQuery } from "./model/getcredentialsquery";
 import { Utils } from "./utils";
 import moment from 'moment';
+import { globalLoggerService as  logger } from "../services/global.logger.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -17,13 +15,6 @@ export class DIDAccess {
 
     constructor() {
         this.helper = new DIDHelper();
-    }
-
-    /**
-     * Overrides the default console logger with a custom logger.
-     */
-    public setLogger(logger: ILogger) {
-        this.helper.setLogger(logger);
     }
 
     public async getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
@@ -43,7 +34,7 @@ export class DIDAccess {
                 let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
 
                 // No such credential, so we have to create one. Send an intent to get that from the did app
-                this.helper.logger.log("Starting to generate a new App ID credential.");
+                logger.log("Starting to generate a new App ID credential.");
 
                 let credential = await connectivity.getActiveConnector().generateAppIdCredential(appInstanceDID.getDIDString(), connectivity.getApplicationDID());
 
@@ -72,11 +63,11 @@ export class DIDAccess {
      * The credential contains the real app did used to publish it.
      */
     public async getExistingAppIdentityCredential(): Promise<DIDPlugin.VerifiableCredential> {
-        this.helper.logger.log("Trying to get an existing app ID credential from storage");
+        logger.log("Trying to get an existing app ID credential from storage");
 
         let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
 
-        this.helper.logger.log("App Instance DID:", appInstanceDID);
+        logger.log("App Instance DID:", appInstanceDID);
 
         let credential = appInstanceDID.getCredential("#app-id-credential");
         if (credential) {
@@ -85,11 +76,11 @@ export class DIDAccess {
             let expirationDate = moment(credential.getExpirationDate());
             if (expirationDate.isBefore(moment().subtract(1, 'hours'))) {
                 // We are expired - ask to generate a new credential
-                this.helper.logger.log("Existing credential is expired or almost expired - renewing it");
+                logger.log("Existing credential is expired or almost expired - renewing it");
                 return null;
             }
             else {
-                this.helper.logger.log("Returning existing app id credential found in app's local storage");
+                logger.log("Returning existing app id credential found in app's local storage");
             }
         }
 
@@ -104,7 +95,7 @@ export class DIDAccess {
         let didStore: DIDPlugin.DIDStore = null;
         let did: DIDPlugin.DID = null;
 
-        this.helper.logger.log("Getting or creating app instance DID");
+        logger.log("Getting or creating app instance DID");
 
         // Check if we have a app instance DID store saved in our local storage (app manager settings)
         let appInstanceDIDInfo = await this.getExistingAppInstanceDIDInfo();
@@ -116,13 +107,13 @@ export class DIDAccess {
                     did = await DIDHelper.loadDID(didStore, appInstanceDIDInfo.didString);
                 }
                 catch (err) {
-                    this.helper.logger.error(err);
+                    logger.error(err);
                 }
             }
         }
 
         if (!didStore || !did) {
-            this.helper.logger.log("No app instance DID found. Creating a new one");
+            logger.log("No app instance DID found. Creating a new one");
 
             // No DID store found. Need to create a new app instance DID.
             let didCreationresult = await this.createNewAppInstanceDID();
@@ -168,7 +159,7 @@ export class DIDAccess {
      * for convenience.
      */
     public fastCreateDID(language: DIDPlugin.MnemonicLanguage): Promise<FastDIDCreationResult> {
-        this.helper.logger.log("Fast DID creation with language "+language);
+        logger.log("Fast DID creation with language "+language);
 
         return new Promise((resolve, reject)=>{
             didManager.generateMnemonic(language, (mnemonic)=>{
@@ -188,19 +179,19 @@ export class DIDAccess {
                                 storePassword: storePass
                             });
                         }, (err)=>{
-                            this.helper.logger.error(err);
+                            logger.error(err);
                             resolve(null);
                         });
                     }, (err)=>{
-                        this.helper.logger.error(err);
+                        logger.error(err);
                         resolve(null);
                     });
                 }, (err)=>{
-                    this.helper.logger.error(err);
+                    logger.error(err);
                     resolve(null);
                 });
             }, (err)=>{
-                this.helper.logger.error(err);
+                logger.error(err);
                 resolve(null);
             });
         });

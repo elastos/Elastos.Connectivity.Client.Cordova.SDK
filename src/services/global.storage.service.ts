@@ -58,5 +58,5 @@ class GlobalStorageService {
   }
 }
 
-export const globalStorageService = getGlobalSingleton("storage", ()=>new GlobalStorageService());
+export const globalStorageService = getGlobalSingleton<GlobalStorageService>("storage", ()=>new GlobalStorageService());
 

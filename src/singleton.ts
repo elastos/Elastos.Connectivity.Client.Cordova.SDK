@@ -1,4 +1,4 @@
-export function getGlobalSingleton(context: string, onSingletonCreation: ()=>any): any {
+export function getGlobalSingleton<T>(context: string, onSingletonCreation: ()=>T): T {
     if (!window["elastosconnectivity"])
         window["elastosconnectivity"] = {};
 

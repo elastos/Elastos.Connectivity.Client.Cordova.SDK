@@ -15,5 +15,5 @@ class GlobalModalService {
   }
 }
 
-export const globalModalService = getGlobalSingleton("modal", ()=>new GlobalModalService());
+export const globalModalService = getGlobalSingleton<GlobalModalService>("modal", ()=>new GlobalModalService());
 

@@ -111,7 +111,6 @@
       dispatch('closing');
     },
     onOpened = () => {
-      console.log("ONOPENED", callback);
       if (callback.onOpened) callback.onOpened();
       dispatch('opened');
     };

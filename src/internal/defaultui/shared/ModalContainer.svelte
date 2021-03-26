@@ -2,13 +2,12 @@
 	import { modal } from './stores';
 	import { bind } from './Modal.svelte';
 	import Modal from './Modal.svelte';
-import type { ModalCallbacks } from './modalcallbacks';
+	import type { ModalCallbacks } from './modalcallbacks';
 
 	let activeModal: Modal;
 
 	export function show(component: Svelte2TsxComponent, props: any, callbacks?: ModalCallbacks) {
 		modal.set(bind(component, props));
-		console.log("activeModal", activeModal);
 		activeModal.setCallback(callbacks || {});
 	}
 

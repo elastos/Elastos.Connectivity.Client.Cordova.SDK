@@ -1,7 +1,8 @@
+import { globalStorageService as storage } from "../../services/global.storage.service";
 import type { IKeyValueStorage } from "../../interfaces/ikeyvaluestorage";
 import type { ILogger } from "../../interfaces/ilogger";
 import { DefaultKeyValueStorage } from "../../internal/defaultkeyvaluestorage";
-import { DefaultLogger } from "../../internal/defaultlogger";
+import { globalLoggerService as  logger } from "../../services/global.logger.service";
 
 declare let hiveManager: HivePlugin.HiveManager;
 
@@ -72,8 +73,6 @@ export class LocalBackupRestoreEntry extends BackupRestoreEntry {
  */
 export class HiveDataSync {
     private contexts: SyncContext[] = [];
-    private storageLayer: IKeyValueStorage | null = null;
-    private logger = new DefaultLogger();
 
     /**
      * As this backup helper relised on vault, a vault instance of the currently user must be
@@ -88,22 +87,6 @@ export class HiveDataSync {
 
         this.userVault = userVault;
         this.showDebugLogs = showDebugLogs;
-        this.storageLayer = new DefaultKeyValueStorage();
-    }
-
-    /**
-     * Overrides the default storage layer in order to store data in a custom storage.
-     * By default, the default storage uses webview's local storage.
-     */
-    public setStorage(storageLayer: IKeyValueStorage) {
-        this.storageLayer = storageLayer;
-    }
-
-    /**
-     * Overrides the default console logger with a custom logger.
-     */
-    public setLogger(logger: ILogger) {
-        this.logger = logger;
     }
 
     /**
@@ -586,24 +569,24 @@ export class HiveDataSync {
 
     // Convenient promise-based way to save a setting in the app manager
     private saveSettingsEntry(key: string, value: any): Promise<void> {
-        return this.storageLayer.set(key, value);
+        return storage.set(key, value);
     }
 
     // Convenient promise-based way to get a setting from the app manager
     private loadSettingsEntry(key: string): Promise<any> {
-        return this.storageLayer.get(key, null);
+        return storage.get(key, null);
     }
 
     private log(message: any, ...params: any) {
-        this.logger.log("BackupRestore: ", message, params);
+        logger.log("BackupRestore: ", message, params);
     }
 
     private logWarn(message: any, ...params: any) {
-        this.logger.warn("BackupRestore: ", message, ...params);
+        logger.warn("BackupRestore: ", message, ...params);
     }
 
     private logDebug(message: any, ...params: any) {
         if (this.showDebugLogs)
-            this.logger.log("BackupRestore[debug]: ", message, ...params);
+            logger.log("BackupRestore[debug]: ", message, ...params);
     }
 }

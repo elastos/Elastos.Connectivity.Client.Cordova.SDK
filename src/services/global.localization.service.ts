@@ -3,8 +3,7 @@ import { fr } from '../assets/localidentity/languages/fr';
 import { zh } from '../assets/localidentity/languages/zh';
 import { getGlobalSingleton } from '../singleton';
 import { format, getMessageFormatter, dictionary, locale } from "svelte-i18n";
-
-console.log("GlobalLocalizationService ENTRY");
+import { globalLoggerService as logger } from "../services/global.logger.service";
 
 class GlobalLocalizationService {
     private activeLanguage;
@@ -21,7 +20,6 @@ class GlobalLocalizationService {
 
     private init() {
         locale.subscribe((lang)=>{
-            console.log("LANG CHANGED:", lang);
             this.activeLanguage = lang;
         });
 
@@ -33,7 +31,7 @@ class GlobalLocalizationService {
      * Sets the active language for all UI items.
      */
     public setLanguage(lang: string) {
-        console.log("Setting connectivity SDK language to: ", lang);
+        logger.log("Setting connectivity SDK language to: ", lang);
         locale.set(lang);
     }
 
@@ -58,7 +56,7 @@ class GlobalLocalizationService {
     }
 }
 
-export const globalLocalizationService = getGlobalSingleton("localization", ()=>new GlobalLocalizationService());
+export const globalLocalizationService = getGlobalSingleton<GlobalLocalizationService>("localization", ()=>new GlobalLocalizationService());
 export {
     format as _,
     getMessageFormatter
