@@ -15,15 +15,15 @@ class GlobalLoggerService {
     }
 
     log(...args: any) {
-        this.logger.log(args);
+        this.logger.log.apply(this.logger, args);
     }
 
     warn(...args: any) {
-        this.logger.warn(args);
+        this.logger.warn.apply(this.logger, args);
     }
 
     error(...args: any) {
-        this.logger.error(args);
+        this.logger.error.apply(this.logger, args);
     }
 }
 
