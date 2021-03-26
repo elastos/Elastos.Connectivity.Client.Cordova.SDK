@@ -82,7 +82,7 @@ class Connectivity {
      * This is true for example for hive's App ID credential, that is different for each connector.
      */
     private async cleanupConnectorContext(connector: IConnector): Promise<void> {
-        logger.log("[Elastos Connectivity SDK] Cleaning up connector context for: "+connector.name);
+        logger.log("Cleaning up connector context for: "+connector.name);
         await new DIDHelper().cleanupConnectorContext(connector);
     }
 
