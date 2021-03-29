@@ -6,23 +6,26 @@
 
 ### Angular apps:
 
-Add SDK assets to angular.json's assets section:
+Add SDK styles to your main scss file:
+
+```
+@import "~@elastosfoundation/elastos-connectivity-sdk-cordova/dist/bundle.css";
+```
+
+And if you are using the local identity connector:
+
+```
+@import "~@elastosfoundation/elastos-connector-localidentity-cordova/dist/bundle.css";
+```
+
+Add SDK assets to angular.json's assets section (local identity connector only):
 
 ```
 {
     "glob": "**/*",
-    "input": "./node_modules/@elastosfoundation/elastos-connectivity-sdk-cordova/dist/assets",
+    "input": "./node_modules/@elastosfoundation/elastos-connector-localidentity-cordova/dist/assets",
     "output": "assets"
 }
-```
-
-Add SDK styles to angular.json's styles section:
-
-```
-styles: [
-    ...,
-    "node_modules/@elastosfoundation/elastos-connectivity-sdk-cordova/dist/bundle.css"
-]
 ```
 
 ## Usage example
