@@ -7,6 +7,34 @@
     h2 {
         font-size: 1.25rem;
     }
+
+    p {
+        padding: 0 10px;
+        font-size: 14px;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    footer {
+        padding: 20px 20px 15px;
+        border: none;
+    }
+
+    button {
+        height: 50px;
+        width: 100%;
+        background: linear-gradient(to bottom, #732dcf, #640fd4);
+        color: white;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .dark-mode {
+        background: #191a2f;
+        color: #ffffff;
+    }
 </style>
 
 <script lang="ts">
@@ -16,8 +44,10 @@
     import { modal } from '../shared/stores';
     import { globalModalService } from '../../../services/global.modal.service';
     import { globalLocalizationService, _ } from '../../../services/global.localization.service';
+    import { globalThemeService } from '../../../services/global.theme.service';
 
     export let onSelection = null;
+    const theme = globalThemeService;
 
     async function connectorSelected(connector: IConnector) {
         connectivity.setActiveConnector(connector.name);
@@ -64,18 +94,18 @@
 </script>
 
 <ion-content class="ion-text-center">
-<ion-grid class="container">
-    <img src={"!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'"} alt="">
-    <h1>{$_('credaccessprompt.please-choose')}</h1>
-    <h2>{$_('credaccessprompt.your-did')}</h2>
-</ion-grid>
+    <ion-grid class="container">
+        <img src={"!theme.darkMode ? 'assets/icons/did.svg' : 'assets/icons/darkmode/did.svg'"} alt="">
+        <h1>{$_('credaccessprompt.please-choose')}</h1>
+        <h2>{$_('credaccessprompt.your-did')}</h2>
+    </ion-grid>
 </ion-content>
 
-<ion-footer class="ion-no-border">
-<p>{ $_('credaccessprompt.login-msg') }</p>
-{#each connectivity.getAvailableConnectors() as connector }
-    {#await connector.getDisplayName() then connectorName }
-    <ion-button on:click={() => connectorSelected(connector)}>{ $_(connectorName) }</ion-button>
-    {/await}
-{/each}
-</ion-footer>
+<footer class:dark-mode={theme.darkMode}>
+    <p>{ $_('credaccessprompt.login-msg') }</p>
+    {#each connectivity.getAvailableConnectors() as connector }
+        {#await connector.getDisplayName() then connectorName }
+            <button on:click={() => connectorSelected(connector)}>{ $_(connectorName) }</button>
+        {/await}
+    {/each}
+</footer>

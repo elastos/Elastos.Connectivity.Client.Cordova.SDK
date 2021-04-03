@@ -222,13 +222,11 @@
     width: 1.5rem;
     height: 1.5rem;
     border: 0;
-    color: black;
     border-radius: 1.5rem;
-    background: white;
-    box-shadow: 0 0 0 1px black;
-    transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
-                background 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
-    -webkit-appearance: none;
+    transition: transform 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+		color: white;
+		background: linear-gradient(to bottom, #732dcf, #640fd4);
+		border: 2px solid linear-gradient(to bottom, #732dcf, #640fd4);
   }
 
   .close:before, .close:after {
@@ -239,10 +237,9 @@
     top: 50%;
     width: 1rem;
     height: 1px;
-    background: black;
+    background: white;
     transform-origin: center;
-    transition: height 0.2s cubic-bezier(0.25, 0.1, 0.25, 1),
-                background 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: height 0.2s cubic-bezier(0.25, 0.1, 0.25, 1), background 0.2s cubic-bezier(0.25, 0.1, 0.25, 1);
   }
 
   .close:before {
@@ -259,20 +256,6 @@
     left: 0.25rem;
   }
 
-  .close:hover {
-    background: black;
-  }
-
-  .close:hover:before, .close:hover:after {
-    height: 2px;
-    background: white;
-  }
-
-  .close:focus {
-    border-color: #3399ff;
-    box-shadow: 0 0 0 2px #3399ff;
-  }
-
   .close:active {
     transform: scale(0.9);
   }
@@ -282,8 +265,8 @@
   }
 
   .dark-mode {
-        background: #191a2f;
-        color: #ffffff;
+    background: #191a2f;
+    color: #ffffff;
   }
 </style>
 

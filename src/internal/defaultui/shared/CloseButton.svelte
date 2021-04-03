@@ -9,8 +9,8 @@
 		top: -3rem;
 		right: 0;
 		color: white;
-		background: purple;
-		border: 2px solid pink;
+		background: linear-gradient(to bottom, #732dcf, #640fd4);
+		border: 2px solid linear-gradient(to bottom, #732dcf, #640fd4);
 	}
 </style>
 

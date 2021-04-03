@@ -1,6 +1,6 @@
 import { getGlobalSingleton } from "../singleton";
 
-class GlobalThemeService {
+export class GlobalThemeService {
     public darkMode: boolean = false;
 
     constructor() {}
