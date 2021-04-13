@@ -2,9 +2,8 @@
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "esModuleInterop": true,
-    "declaration": true,
-    "outDir": "dist",
     "target": "es2020",
+    "declaration": true,
     "moduleResolution": "Node",
     "isolatedModules": true,
     "preserveConstEnums": true,

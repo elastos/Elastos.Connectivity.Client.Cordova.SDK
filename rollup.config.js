@@ -5,8 +5,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import sveltePreprocess from "svelte-preprocess";
-import typescript from "@rollup/plugin-typescript";
 //import analyze from 'rollup-plugin-analyzer';
+import ts from "@wessberg/rollup-plugin-ts";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -35,7 +35,7 @@ export default {
 
 		postcss({
             extract: 'bundle.css'
-         }),
+        }),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
@@ -47,10 +47,13 @@ export default {
 			dedupe: ['svelte']
 		}),
 		commonjs(),
-        typescript({
+        /*typescript({
+			declaration: true,
+			declarationDir: "dist/",
             sourceMap: true,
             inlineSources: !production
-        }),
+        }),*/
+		ts(),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify
