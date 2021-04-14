@@ -57,6 +57,7 @@ class GlobalLocalizationService {
 }
 
 export const globalLocalizationService = getGlobalSingleton<GlobalLocalizationService>("localization", ()=>new GlobalLocalizationService());
+
 export {
     format as _,
     getMessageFormatter

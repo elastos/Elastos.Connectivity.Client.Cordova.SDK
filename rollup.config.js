@@ -6,7 +6,7 @@ import { terser } from 'rollup-plugin-terser';
 import postcss from 'rollup-plugin-postcss';
 import sveltePreprocess from "svelte-preprocess";
 //import analyze from 'rollup-plugin-analyzer';
-import ts from "@wessberg/rollup-plugin-ts";
+import typescript from "@rollup/plugin-typescript";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -20,7 +20,7 @@ export default {
         },
         {
             sourcemap: true,
-            format: 'esm',
+            format: 'es',
             file: 'dist.esm/index.js'
         }
     ],
@@ -47,13 +47,11 @@ export default {
 			dedupe: ['svelte']
 		}),
 		commonjs(),
-        /*typescript({
-			declaration: true,
-			declarationDir: "dist/",
+        typescript({
+			declaration: false,
             sourceMap: true,
             inlineSources: !production
-        }),*/
-		ts(),
+        }),
 
 		// If we're building for production (npm run build
 		// instead of npm run dev), minify

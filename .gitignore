@@ -4,3 +4,4 @@ dist/
 dist.esm/
 .DS_Store
 stats.json
+typings/
