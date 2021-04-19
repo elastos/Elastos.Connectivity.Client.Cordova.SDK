@@ -39,7 +39,7 @@ export class ElastosWeb3Provider implements AbstractProvider {
     constructor(private rpcApiEndpoint: string) {}
 
     /**
-     * Returns the previously fetched RPC API endpoint from elastOS's preferences
+     * Returns the previously fetched RPC API endpoint from Elastos Essentials's preferences
      */
     private getRPCApiEndpoint(): string {
         return this.rpcApiEndpoint;

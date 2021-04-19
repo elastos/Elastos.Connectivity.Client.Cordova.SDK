@@ -26,7 +26,7 @@ export const en = {
     'titlebar-title': 'Identity Setup',
     'slide2-msg': 'This application uses decentralized identities (DIDs). With decentralized identities, you own your identity, your data.',
     'slide2-msg2': 'So it seems that you either don\'t know what this is yet, or you have never created your own identity? We are here to help, the following steps will automatically create and publish a brand new Elastos Identity and storage space for you.',
-    'slide3-msg': 'In the future, if you want to better control or use this identity in other DID-powered applications, you may export it to a third party wallet application such as elastOS.',
+    'slide3-msg': 'In the future, if you want to better control or use this identity in other DID-powered applications, you may export it to a third party wallet application such as Elastos Essentials.',
     'create-did': 'Create Identity',
     'create-did-msg': 'Add a new identity to your device',
     'publish-did': 'Publish Identity',
@@ -45,7 +45,7 @@ export const en = {
     'titlebar-title': 'Profile Request',
     'profile-request': 'Profile Request',
     'intro': 'You are currently using a',
-    'message': 'This application is requesting some of your profile information. As this is a temporary identity, default information is going to be returned for now. Later on, you can fully manage your identity using an app such as elastOS.',
+    'message': 'This application is requesting some of your profile information. As this is a temporary identity, default information is going to be returned for now. Later on, you can fully manage your identity using an app such as Elastos Essentials.',
   },
 
   'credaccessprompt': {
@@ -54,7 +54,7 @@ export const en = {
     'temp-did': 'Temporary Identity',
     'please-choose': 'Please Choose',
     'your-did': 'Your Identity',
-    'elastos-essentials': 'elastOS Essentials',
+    'elastos-essentials': 'Elastos Essentials',
   },
 
   'exportidentity': {
@@ -65,7 +65,7 @@ export const en = {
     'paperkey': 'Paper Key',
     'show-paperkey': 'Show Paper Key',
     'hide-paperkey': 'Hide Paper Key',
-    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
+    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: Elastos Essentials).',
     'paperkey-copied-msg': 'Your paper key has been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
   },
 
@@ -74,7 +74,7 @@ export const en = {
     'did-management': 'Identity Management',
     'intro': 'You are currently using a',
     'intro2': 'bound only to this application. Besides, this identity has currently not been saved and cannot be recovered if you reinstall the application, nor can it be shared with other applications.',
-    'intro3': 'We recommend you to export your temporary identity to an external identity app such as elastOS (it has to be installed on your device first).',
+    'intro3': 'We recommend you to export your temporary identity to an external identity app such as Elastos Essentials (it has to be installed on your device first).',
     'export-did': 'Export Identity',
     'edit-profile': 'Edit Profile',
   },

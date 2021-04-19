@@ -26,7 +26,7 @@ export const zh = {
     'titlebar-title': '身份设置',
     'slide2-msg': '此应用程序使用去中心身份（DID）。 使用去中心身份，您拥有自己的身份和数据。',
     'slide2-msg2': '因此，您似乎还不知道这是什么，或者您从未创建自己的身份？ 我们在这里为您提供帮助，以下步骤将自动为您创建和发布全新的Elastos身份和存储空间。',
-    'slide3-msg': '将来，如果您想更好地控制或在其他支持DID的应用程序中使用此身份，可以将其导出到第三方钱包应用程序，例如elastOS。',
+    'slide3-msg': '将来，如果您想更好地控制或在其他支持DID的应用程序中使用此身份，可以将其导出到第三方钱包应用程序，例如Elastos Essentials。',
     'create-did': '创建身份',
     'create-did-msg': '向您的设备添加新身份',
     'publish-did': '发布身份',
@@ -45,7 +45,7 @@ export const zh = {
     'titlebar-title': '个人资料请求',
     'profile-request': '个人资料请求',
     'intro': '您目前正在使用',
-    'message': '该应用程序正在请求您的一些个人资料信息。 由于这是一个临时身份，因此暂时将返回默认信息。 稍后，您可以使用elastOS等应用程序来完全管理您的身份。',
+    'message': '该应用程序正在请求您的一些个人资料信息。 由于这是一个临时身份，因此暂时将返回默认信息。 稍后，您可以使用Elastos Essentials等应用程序来完全管理您的身份。',
   },
 
   'credaccessprompt': {
@@ -54,7 +54,7 @@ export const zh = {
     'temp-did': '临时身份',
     'please-choose': '请选择',
     'your-did': '您的身份',
-    'elastos-essentials': 'elastOS Essentials',
+    'elastos-essentials': 'Elastos Essentials',
   },
 
   'exportidentity': {
@@ -65,7 +65,7 @@ export const zh = {
     'paperkey': 'Paper Key',
     'show-paperkey': 'Show Paper Key',
     'hide-paperkey': 'Hide Paper Key',
-    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: elastOS).',
+    'paperkey-not-copied-msg': 'Safely store the words in your paper key in the right order. After that, you can copy and paste them in the import identity flow of your favorite identity apps (ex: Elastos Essentials).',
     'paperkey-copied-msg': 'Your paper key has been copied to your clipboard. Please save them safely. You can now open your third party identity app and import your identity using these words.'
   },
 
@@ -74,7 +74,7 @@ export const zh = {
     'did-management': '身份管理',
     'intro': '您目前正在使用',
     'intro2': '仅绑定到此应用程序。 此外，该身份当前尚未保存，如果您重新安装该应用程序，则该身份无法恢复，也无法与其他应用程序共享。',
-    'intro3': '我们建议您将临时身份导出到外部身份钱包，例如elastOS（必须先将其安装在设备上）。',
+    'intro3': '我们建议您将临时身份导出到外部身份钱包，例如Elastos Essentials（必须先将其安装在设备上）。',
     'export-did': '导出身份',
     'edit-profile': '编辑档案',
   },
