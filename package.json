@@ -1,13 +1,13 @@
 {
   "name": "@elastosfoundation/elastos-connectivity-sdk-cordova",
-  "version": "1.0.21",
+  "version": "1.0.22",
   "description": "Elastos Cordova connectivity SDK to bridge mobile Apps with Elastos wallets",
   "main": "dist/index.js",
   "module": "dist.esm/index.js",
   "scripts": {
     "build": "npm run clean && npm run types && rollup -c",
     "dev": "rollup -c -w",
-    "prepublishOnly": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
     "clean": "rm -rf dist/ dist.esm/ typings/",
     "types": "tsc --emitDeclarationOnly --outDir typings/",
     "validate": "svelte-check"

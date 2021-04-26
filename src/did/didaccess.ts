@@ -31,7 +31,13 @@ export class DIDAccess {
     public async generateAppIdCredential(): Promise<DIDPlugin.VerifiableCredential> {
         return new Promise((resolve)=>{
             ConnectivityHelper.ensureActiveConnector(async ()=>{
-                let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
+                let storedAppInstanceDID = await this.getOrCreateAppInstanceDID();
+                if (!storedAppInstanceDID) {
+                    resolve(null);
+                    return;
+                }
+
+                let appInstanceDID = storedAppInstanceDID.did;
 
                 // No such credential, so we have to create one. Send an intent to get that from the did app
                 logger.log("Starting to generate a new App ID credential.");
@@ -65,7 +71,11 @@ export class DIDAccess {
     public async getExistingAppIdentityCredential(): Promise<DIDPlugin.VerifiableCredential> {
         logger.log("Trying to get an existing app ID credential from storage");
 
-        let appInstanceDID = (await this.getOrCreateAppInstanceDID()).did;
+        let storedAppInstanceDID = await this.getOrCreateAppInstanceDID();
+        if (!storedAppInstanceDID) {
+            return null;
+        }
+        let appInstanceDID = storedAppInstanceDID.did;
 
         logger.log("App Instance DID:", appInstanceDID);
 
@@ -89,7 +99,7 @@ export class DIDAccess {
 
     /**
      * Get the existing application instance DID if it was created before. Otherwise, a new app instance
-     * DID is created and the information is stored in persistant storage for later use.
+     * DID is created and the information is stored in persistent storage for later use.
      */
     public async getOrCreateAppInstanceDID(): Promise<{did: DIDPlugin.DID, didStore: DIDPlugin.DIDStore}> {
         let didStore: DIDPlugin.DIDStore = null;
@@ -97,37 +107,44 @@ export class DIDAccess {
 
         logger.log("Getting or creating app instance DID");
 
-        // Check if we have a app instance DID store saved in our local storage (app manager settings)
-        let appInstanceDIDInfo = await this.getExistingAppInstanceDIDInfo();
-        if (appInstanceDIDInfo) {
-            // DID store found - previously created. Open it and get the app instance did.
-            didStore = await DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
-            if (didStore) { // Make sure the DID store could be loaded, just in case (abnormal case).
-                try {
-                    did = await DIDHelper.loadDID(didStore, appInstanceDIDInfo.didString);
+        return new Promise((resolve)=>{
+            ConnectivityHelper.ensureActiveConnector(async ()=>{
+                // Check if we have a app instance DID store saved in our local storage (app manager settings)
+                let appInstanceDIDInfo = await this.getExistingAppInstanceDIDInfo();
+                if (appInstanceDIDInfo) {
+                    // DID store found - previously created. Open it and get the app instance did.
+                    didStore = await DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
+                    if (didStore) { // Make sure the DID store could be loaded, just in case (abnormal case).
+                        try {
+                            did = await DIDHelper.loadDID(didStore, appInstanceDIDInfo.didString);
+                        }
+                        catch (err) {
+                            logger.error(err);
+                        }
+                    }
                 }
-                catch (err) {
-                    logger.error(err);
+
+                if (!didStore || !did) {
+                    logger.log("No app instance DID found. Creating a new one");
+
+                    // No DID store found. Need to create a new app instance DID.
+                    let didCreationresult = await this.createNewAppInstanceDID();
+                    didStore = didCreationresult.didStore;
+                    did = didCreationresult.did;
                 }
-            }
-        }
 
-        if (!didStore || !did) {
-            logger.log("No app instance DID found. Creating a new one");
+                // Load credentials first before being able to call getCredential().
+                await DIDHelper.loadDIDCredentials(did);
 
-            // No DID store found. Need to create a new app instance DID.
-            let didCreationresult = await this.createNewAppInstanceDID();
-            didStore = didCreationresult.didStore;
-            did = didCreationresult.did;
-        }
-
-        // Load credentials first before being able to call getCredential().
-        await DIDHelper.loadDIDCredentials(did);
-
-        return {
-            did: did,
-            didStore: didStore
-        };
+                resolve({
+                    did: did,
+                    didStore: didStore
+                });
+            }, ()=>{
+                // Cancelled
+                resolve(null);
+            });
+        });
     }
 
      /**
