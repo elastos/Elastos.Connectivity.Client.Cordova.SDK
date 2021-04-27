@@ -41,9 +41,8 @@
     //import { _ } from 'svelte-i18n';
     import { connectivity } from '../../../connectivity';
     import type { IConnector } from '../../../interfaces/connectors';
-    import { modal } from '../shared/stores';
     import { globalModalService } from '../../../services/global.modal.service';
-    import { globalLocalizationService, _ } from '../../../services/global.localization.service';
+    import { _ } from "svelte-i18n";
     import { globalThemeService } from '../../../services/global.theme.service';
 
     export let onSelection = null;

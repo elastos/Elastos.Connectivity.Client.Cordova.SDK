@@ -4,9 +4,10 @@ import { zh } from '../assets/localidentity/languages/zh';
 import { getGlobalSingleton } from '../singleton';
 import { format, getMessageFormatter, dictionary, locale } from "svelte-i18n";
 import { globalLoggerService as logger } from "../services/global.logger.service";
+import { BehaviorSubject } from 'rxjs';
 
 class GlobalLocalizationService {
-    private activeLanguage;
+    public activeLanguage = new BehaviorSubject<string>("en");
     private baseLanguages = {
         en: en,
         fr: fr,
@@ -20,7 +21,7 @@ class GlobalLocalizationService {
 
     private init() {
         locale.subscribe((lang)=>{
-            this.activeLanguage = lang;
+            this.activeLanguage.next(lang);
         });
 
         dictionary.set(this.currentLanguages);
@@ -36,7 +37,7 @@ class GlobalLocalizationService {
     }
 
     public getLanguage(): string {
-        return null; // TODO
+        return this.activeLanguage.value;
     }
 
     /**
@@ -57,8 +58,3 @@ class GlobalLocalizationService {
 }
 
 export const globalLocalizationService = getGlobalSingleton<GlobalLocalizationService>("localization", ()=>new GlobalLocalizationService());
-
-export {
-    format as _,
-    getMessageFormatter
-};

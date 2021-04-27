@@ -3,6 +3,7 @@ import type { IConnector } from "./interfaces/connectors/iconnector";
 import { globalStorageService } from "./services/global.storage.service";
 import { DIDHelper } from "./did/didhelper";
 import { globalLoggerService as logger } from "./services/global.logger.service";
+import { globalLocalizationService } from "./services/global.localization.service";
 
 class Connectivity {
     private connectors: IConnector[] = [];
@@ -10,7 +11,8 @@ class Connectivity {
     public genericUIHandler: IGenericUIHandler = null;
     private applicationDID: string = null;
 
-    constructor() {}
+    constructor() {
+    }
 
     /**
      * Registers a new connector as part of the available service providers.
