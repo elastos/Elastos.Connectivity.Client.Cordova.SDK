@@ -26,5 +26,7 @@
     ]
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules/*", "__sapper__/*", "dist/*"]
+  "exclude": [
+    "node_modules/*", "__sapper__/*", "dist/*"
+  ]
 }

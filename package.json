@@ -9,7 +9,7 @@
     "dev": "rollup -c -w",
     "prepublishOnly": "npm run clean && npm run build",
     "clean": "rm -rf dist/ dist.esm/ typings/",
-    "types": "tsc --emitDeclarationOnly --outDir typings/",
+    "types": "npm run clean && tsc --emitDeclarationOnly --outDir typings/",
     "validate": "svelte-check"
   },
   "repository": {
