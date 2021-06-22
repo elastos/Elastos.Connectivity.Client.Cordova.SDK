@@ -1,6 +1,6 @@
 {
   "name": "@elastosfoundation/elastos-connectivity-sdk-cordova",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "Elastos Cordova connectivity SDK to bridge mobile Apps with Elastos wallets",
   "main": "dist/index.js",
   "module": "dist.esm/index.js",
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/elastos/Elastos.Connectivity.Client.Cordova.SDK",
   "dependencies": {
-    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.0",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.11",
     "@elastosfoundation/elastos-cordova-plugin-hive": "^1.0.0",
     "moment": "^2.29.1",
     "rxjs": "^6.6.7",
