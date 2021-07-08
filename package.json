@@ -1,6 +1,6 @@
 {
   "name": "@elastosfoundation/elastos-connectivity-sdk-cordova",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Elastos Cordova connectivity SDK to bridge mobile Apps with Elastos wallets",
   "main": "dist/index.js",
   "module": "dist.esm/index.js",

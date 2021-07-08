@@ -31,7 +31,7 @@ export class AuthHelper {
 
         logger.log("Getting app instance DID document");
         appInstanceDIDInfo.didStore.loadDidDocument(appInstanceDIDInfo.did.getDIDString(), async (didDocument)=>{
-          logger.log("Got app instance DID document. Now creating the Hive client", didDocument);
+          logger.log("Got app instance DID document. Now creating the Hive client", await didDocument.toJson());
           let client = await hiveManager.getClient({
             authenticationHandler: new class AuthenticationHandler implements HivePlugin.AuthenticationHandler {
               /**
