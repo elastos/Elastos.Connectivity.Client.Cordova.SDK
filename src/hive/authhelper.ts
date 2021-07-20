@@ -136,12 +136,13 @@ export class AuthHelper {
       ], realm, nonce, appInstanceDIDInfo.storePassword, async (presentation)=>{
         if (presentation) {
           // Generate the hive back end authentication JWT
-          logger.log("Opening DID store to create a JWT for presentation:", presentation);
+          logger.log("Opening DID store to create a JWT for presentation:", await presentation.toJson());
           let didStore = await DIDHelper.openDidStore(appInstanceDIDInfo.storeId);
 
           logger.log("Loading DID document");
           didStore.loadDidDocument(appInstanceDIDInfo.didString, async (didDocument)=>{
             let validityDays = 2;
+            logger.log("App instance DID document", await didDocument.toJson());
             logger.log("Creating JWT");
             didDocument.createJWT({
               presentation: JSON.parse(await presentation.toJson())

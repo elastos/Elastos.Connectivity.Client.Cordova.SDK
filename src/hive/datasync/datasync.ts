@@ -75,7 +75,7 @@ export class HiveDataSync {
     private contexts: SyncContext[] = [];
 
     /**
-     * As this backup helper relised on vault, a vault instance of the currently user must be
+     * As this backup helper relies on hive vaults, a vault instance of the currently user must be
      * passed.
      *
      * Debug information can be displayed in console logs by setting showDebugLogs to true.
@@ -569,12 +569,19 @@ export class HiveDataSync {
 
     // Convenient promise-based way to save a setting in the app manager
     private saveSettingsEntry(key: string, value: any): Promise<void> {
-        return storage.set(key, value);
+        return storage.set(this.didSandboxedKey(key), value);
     }
 
     // Convenient promise-based way to get a setting from the app manager
-    private loadSettingsEntry(key: string): Promise<any> {
-        return storage.get(key, null);
+    private async loadSettingsEntry(key: string): Promise<any> {
+        //console.log("DEBUG loadSettingsEntry", this.didSandboxedKey(key), await storage.get(this.didSandboxedKey(key), null))
+        return storage.get(this.didSandboxedKey(key), null);
+    }
+
+    // Returns a new key based on current vault's user's DID.
+    // "myKey" --> "did:elastos:xxx_myKey"
+    private didSandboxedKey(key: string): string {
+        return this.userVault.getVaultOwnerDid()+"_"+key;
     }
 
     private log(message: any, ...params: any) {
