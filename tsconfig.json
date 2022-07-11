@@ -10,13 +10,15 @@
     "isolatedModules": true,
     "preserveConstEnums": true,
     "sourceMap": true,
-    "lib": [ "es2015", "dom" ],
+    "lib": [
+      "es2015",
+      "dom"
+    ],
     "typeRoots": [
       "node_modules",
     ],
     "types": [
       "@elastosfoundation/elastos-cordova-plugin-did",
-      "@elastosfoundation/elastos-cordova-plugin-hive",
       "svelte",
       "svelte/store",
       "svelte/motion",
@@ -25,8 +27,12 @@
       "svelte/easing"
     ]
   },
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
-    "node_modules/*", "__sapper__/*", "dist/*"
+    "node_modules/*",
+    "__sapper__/*",
+    "dist/*"
   ]
 }
