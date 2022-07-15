@@ -1,12 +1,12 @@
+import moment from 'moment';
 import { connectivity } from "../connectivity";
 import { ConnectivityHelper } from "../internal/connectivityhelper";
+import { globalLoggerService as logger } from "../services/global.logger.service";
 import { globalStorageService } from "../services/global.storage.service";
-import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import { DIDHelper } from "./didhelper";
+import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import type { GetCredentialsQuery } from "./model/getcredentialsquery";
 import { Utils } from "./utils";
-import moment from 'moment';
-import { globalLoggerService as  logger } from "../services/global.logger.service";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -18,19 +18,19 @@ export class DIDAccess {
     }
 
     public async getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
-        return new Promise((resolve)=>{
-            ConnectivityHelper.ensureActiveConnector(async ()=>{
+        return new Promise((resolve) => {
+            ConnectivityHelper.ensureActiveConnector(async () => {
                 let presentation = await connectivity.getActiveConnector().getCredentials(query);
                 resolve(presentation);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
     }
 
     public async generateAppIdCredential(): Promise<DIDPlugin.VerifiableCredential> {
-        return new Promise((resolve)=>{
-            ConnectivityHelper.ensureActiveConnector(async ()=>{
+        return new Promise((resolve) => {
+            ConnectivityHelper.ensureActiveConnector(async () => {
                 let storedAppInstanceDID = await this.getOrCreateAppInstanceDID();
                 if (!storedAppInstanceDID) {
                     resolve(null);
@@ -57,7 +57,7 @@ export class DIDAccess {
                 // appDid
 
                 resolve(credential);
-            }, ()=>{
+            }, () => {
                 resolve(null);
             });
         });
@@ -101,14 +101,14 @@ export class DIDAccess {
      * Get the existing application instance DID if it was created before. Otherwise, a new app instance
      * DID is created and the information is stored in persistent storage for later use.
      */
-    public async getOrCreateAppInstanceDID(): Promise<{did: DIDPlugin.DID, didStore: DIDPlugin.DIDStore}> {
+    public async getOrCreateAppInstanceDID(): Promise<{ did: DIDPlugin.DID, didStore: DIDPlugin.DIDStore }> {
         let didStore: DIDPlugin.DIDStore = null;
         let did: DIDPlugin.DID = null;
 
         logger.log("Getting or creating app instance DID");
 
-        return new Promise((resolve)=>{
-            ConnectivityHelper.ensureActiveConnector(async ()=>{
+        return new Promise((resolve) => {
+            ConnectivityHelper.ensureActiveConnector(async () => {
                 // Check if we have a app instance DID store saved in our local storage (app manager settings)
                 let appInstanceDIDInfo = await this.getExistingAppInstanceDIDInfo();
                 if (appInstanceDIDInfo) {
@@ -129,8 +129,14 @@ export class DIDAccess {
 
                     // No DID store found. Need to create a new app instance DID.
                     let didCreationresult = await this.createNewAppInstanceDID();
-                    didStore = didCreationresult.didStore;
-                    did = didCreationresult.did;
+                    if (!didCreationresult) {
+                        resolve(null);
+                        return;
+                    }
+                    else {
+                        didStore = didCreationresult.didStore;
+                        did = didCreationresult.did;
+                    }
                 }
 
                 // Load credentials first before being able to call getCredential().
@@ -140,17 +146,17 @@ export class DIDAccess {
                     did: did,
                     didStore: didStore
                 });
-            }, ()=>{
+            }, () => {
                 // Cancelled
                 resolve(null);
             });
         });
     }
 
-     /**
-     * Retrieve information about existing app instance info from permanent storage, if any.
-     */
-    public async getExistingAppInstanceDIDInfo(): Promise<{storeId: string, didString: string, storePassword: string}> {
+    /**
+    * Retrieve information about existing app instance info from permanent storage, if any.
+    */
+    public async getExistingAppInstanceDIDInfo(): Promise<{ storeId: string, didString: string, storePassword: string }> {
         let storeId = await globalStorageService.get("dappsdk_appinstancedidstoreid", null, true)
         let didString = await globalStorageService.get("dappsdk_appinstancedidstring", null, true)
         let storePassword = await globalStorageService.get("dappsdk_appinstancedidstorepassword", null, true)
@@ -176,38 +182,38 @@ export class DIDAccess {
      * for convenience.
      */
     public fastCreateDID(language: DIDPlugin.MnemonicLanguage): Promise<FastDIDCreationResult> {
-        logger.log("Fast DID creation with language "+language);
+        logger.log("Fast DID creation with language " + language);
 
-        return new Promise((resolve, reject)=>{
-            didManager.generateMnemonic(language, (mnemonic)=>{
+        return new Promise((resolve, reject) => {
+            didManager.generateMnemonic(language, (mnemonic) => {
                 let didStoreId = Utils.generateRandomDIDStoreId();
-                didManager.initDidStore(didStoreId, (payload: string, memo: string) =>{
+                didManager.initDidStore(didStoreId, (payload: string, memo: string) => {
                     // Never called
-                }, async (didStore)=>{
+                }, async (didStore) => {
                     // Store created, now init the private identity
                     let storePass = this.helper.generateRandomPassword();
-                    didStore.initPrivateIdentity(language, mnemonic, null, storePass, true, ()=>{
+                    didStore.initPrivateIdentity(language, mnemonic, null, storePass, true, () => {
                         // Now add a DID
-                        didStore.newDid(storePass, "", (did)=>{
+                        didStore.newDid(storePass, "", (did) => {
                             // DID added, now we can return
                             resolve({
                                 didStore: didStore,
                                 did: did,
                                 storePassword: storePass
                             });
-                        }, (err)=>{
+                        }, (err) => {
                             logger.error(err);
                             resolve(null);
                         });
-                    }, (err)=>{
+                    }, (err) => {
                         logger.error(err);
                         resolve(null);
                     });
-                }, (err)=>{
+                }, (err) => {
                     logger.error(err);
                     resolve(null);
                 });
-            }, (err)=>{
+            }, (err) => {
                 logger.error(err);
                 resolve(null);
             });
@@ -217,8 +223,11 @@ export class DIDAccess {
     /**
      * Creates a new application instance DID store, DID, and saves info to permanent storage.
      */
-    public async createNewAppInstanceDID(): Promise<{didStore: DIDPlugin.DIDStore, did: DIDPlugin.DID}> {
+    public async createNewAppInstanceDID(): Promise<{ didStore: DIDPlugin.DIDStore, did: DIDPlugin.DID }> {
         let didCreationResult = await this.fastCreateDID("ENGLISH");
+        if (!didCreationResult)
+            return null;
+
         await this.helper.saveAppInstanceDIDInfo(didCreationResult.didStore.getId(), didCreationResult.did.getDIDString(), didCreationResult.storePassword);
 
         return {
