@@ -6,7 +6,8 @@ import { globalStorageService } from "../services/global.storage.service";
 import { DIDHelper } from "./didhelper";
 import type { FastDIDCreationResult } from "./fastdidcreationresult";
 import type { GetCredentialsQuery } from "./model/getcredentialsquery";
-import { Utils } from "./utils";
+import type { CredentialDisclosureRequest } from './model/requestcredentialsquery';
+import { generateRandomDIDStoreId, notImplementedError, randomString } from "./utils";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -17,11 +18,74 @@ export class DIDAccess {
         this.helper = new DIDHelper();
     }
 
+    /**
+     * @deprecated Use requestCredentials().
+     *
+     * Gets credentials from user identity, based on the requested GetCredentialsQuery.
+     * A DID Verifiable Presentation is returned, including the list of related credentials found
+     * in user's identity wallet.
+     */
     public async getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation> {
         return new Promise((resolve) => {
             ConnectivityHelper.ensureActiveConnector(async () => {
                 let presentation = await connectivity.getActiveConnector().getCredentials(query);
                 resolve(presentation);
+            }, () => {
+                resolve(null);
+            });
+        });
+    }
+
+    /**
+     * Replacement for the deprecated getCredentials().
+     *
+     * Gets credentials from user identity, based on the requested CredentialDisclosureRequest.
+     * A DID Verifiable Presentation is returned, including the list of related credentials found
+     * in user's identity wallet.
+     */
+    public async requestCredentials(request: CredentialDisclosureRequest): Promise<DIDPlugin.VerifiablePresentation> {
+        return new Promise((resolve, reject) => {
+            ConnectivityHelper.ensureActiveConnector(async () => {
+                if (!connectivity.getActiveConnector().requestCredentials) {
+                    reject(notImplementedError("requestCredentials"));
+                    return;
+                }
+
+                try {
+                    // If realm and/or nonce are not set by the app, we set and verify some values.
+                    // DID SDKs force those fields to be set for security reasons.
+                    let shouldManuallyVerifyNonce = false;
+                    if (!request.nonce) {
+                        request.nonce = randomString();
+                        shouldManuallyVerifyNonce = true;
+                    }
+                    let shouldManuallyVerifyRealm = false;
+                    if (!request.realm) {
+                        request.realm = randomString();
+                        shouldManuallyVerifyRealm = true;
+                    }
+
+                    // Hardcoded format version - we are now at version 2 (after May 2022)
+                    request._version = 2;
+
+                    let presentation = await connectivity.getActiveConnector().requestCredentials(request);
+
+                    /* TODO: DID plugin can't match those DID JS SDK calls for now - improve this
+                    if (presentation) {
+                        if (shouldManuallyVerifyNonce && request.nonce !== presentation.getProof().getNonce()) {
+                            reject(new Error("Automatically generated nonce doesn't match nonce in the returned presentation"));
+                            return;
+                        }
+                        if (shouldManuallyVerifyRealm && request.realm !== presentation.getProof().getRealm()) {
+                            reject(new Error("Automatically generated realm doesn't match realm in the returned presentation"));
+                            return;
+                        }
+                    } */
+                    resolve(presentation);
+                }
+                catch (e) {
+                    reject(e);
+                }
             }, () => {
                 resolve(null);
             });
@@ -186,7 +250,7 @@ export class DIDAccess {
 
         return new Promise((resolve, reject) => {
             didManager.generateMnemonic(language, (mnemonic) => {
-                let didStoreId = Utils.generateRandomDIDStoreId();
+                let didStoreId = generateRandomDIDStoreId();
                 didManager.initDidStore(didStoreId, (payload: string, memo: string) => {
                     // Never called
                 }, async (didStore) => {

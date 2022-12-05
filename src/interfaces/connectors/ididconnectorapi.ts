@@ -1,4 +1,5 @@
 import type { GetCredentialsQuery } from "../../did/model/getcredentialsquery";
+import type { CredentialDisclosureRequest } from "../../did/model/requestcredentialsquery";
 export interface IDIDConnectorAPI {
     /**
      * Gets credentials from user identity, based on the requested GetCredentialsQuery. Claims format is available
@@ -7,6 +8,15 @@ export interface IDIDConnectorAPI {
      * in user's identity wallet.
      */
     getCredentials(query: GetCredentialsQuery): Promise<DIDPlugin.VerifiablePresentation>;
+
+    /**
+     * Replacement for the deprecated getCredentials().
+     *
+     * Gets credentials from user identity, based on the requested CredentialDisclosureRequest.
+     * A DID Verifiable Presentation is returned, including the list of related credentials found
+     * in user's identity wallet.
+     */
+    requestCredentials?(request: CredentialDisclosureRequest): Promise<DIDPlugin.VerifiablePresentation>;
 
     /**
      * Requests user's identity wallet to generate a special "app ID" credential. This credential is used

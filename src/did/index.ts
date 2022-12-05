@@ -1,16 +1,6 @@
-import { DIDAccess } from "./didaccess";
-import { DIDHelper } from "./didhelper";
-import type { FastDIDCreationResult } from "./fastdidcreationresult";
-import type { UICustomization,  GetCredentialsQuery } from "./model/getcredentialsquery";
-
-export type {
-    FastDIDCreationResult,
-    UICustomization,
-    GetCredentialsQuery
-}
-
-export {
-    DIDAccess,
-    DIDHelper
-}
+export * from "./didaccess";
+export * from "./didhelper";
+export * from "./fastdidcreationresult";
+export * from "./model/getcredentialsquery";
+export * from "./model/requestcredentialsquery";
 

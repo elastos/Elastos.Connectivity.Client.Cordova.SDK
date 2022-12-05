@@ -1,11 +1,11 @@
-import { Utils } from "./utils";
-import { globalStorageService } from "../services/global.storage.service";
 import type { IConnector } from "../interfaces/connectors";
+import { globalStorageService } from "../services/global.storage.service";
+import { generateRandomDIDStoreId } from "./utils";
 
 declare let didManager: DIDPlugin.DIDManager;
 
 export class DIDHelper {
-    constructor() {}
+    constructor() { }
 
     /**
      * Saves app instance did info to permanent storage.
@@ -31,18 +31,18 @@ export class DIDHelper {
      * Use the same mechanism as generateRandomDIDStoreId(), this can generate a simple password.
      */
     public generateRandomPassword(): string {
-        return Utils.generateRandomDIDStoreId();
+        return generateRandomDIDStoreId();
     }
 
     /**
      * Convenient way to open a DID store from its ID
      */
     public static openDidStore(storeId: string): Promise<DIDPlugin.DIDStore> {
-        return new Promise((resolve)=>{
-            didManager.initDidStore(storeId, null, (didstore)=>{
-            resolve(didstore);
-            }, (err)=>{
-            resolve(null);
+        return new Promise((resolve) => {
+            didManager.initDidStore(storeId, null, (didstore) => {
+                resolve(didstore);
+            }, (err) => {
+                resolve(null);
             })
         });
     }
@@ -51,10 +51,10 @@ export class DIDHelper {
      * Convenient way to load a DID.
      */
     public static loadDID(didStore: DIDPlugin.DIDStore, didString: string): Promise<DIDPlugin.DID> {
-        return new Promise((resolve, reject)=>{
-            didStore.loadDidDocument(didString, (didDocument)=>{
+        return new Promise((resolve, reject) => {
+            didStore.loadDidDocument(didString, (didDocument) => {
                 resolve(didDocument.getSubject());
-            }, (err)=>{
+            }, (err) => {
                 reject(err);
             })
         });
@@ -62,10 +62,10 @@ export class DIDHelper {
 
 
     public static loadDIDCredentials(did: DIDPlugin.DID): Promise<DIDPlugin.VerifiableCredential[]> {
-        return new Promise((resolve, reject)=>{
-            did.loadCredentials((credentials)=>{
+        return new Promise((resolve, reject) => {
+            did.loadCredentials((credentials) => {
                 resolve(credentials);
-            }, (err)=> {
+            }, (err) => {
                 reject(err);
             })
         });
